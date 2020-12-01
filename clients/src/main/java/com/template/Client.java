@@ -9,6 +9,7 @@ import net.corda.core.messaging.FlowHandle;
 import net.corda.core.node.NodeInfo;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
+import net.corda.examples.tokenizedCurrency.flows.DigitalShellTokenCreateAndIssue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class Client {
         System.out.println("\n-- Here is the node info of the node that the client connected to --");
         logger.info("{}", name);
 
-        FlowHandle<SignedTransaction> signedTransactionFlowHandle = proxy.startFlowDynamic(CurrencyEvolvableFungibleTokenFlow.CreateCurrencyTokenFlow.class, "Currency",new BigDecimal(10000));
+        FlowHandle<SignedTransaction> signedTransactionFlowHandle = proxy.startFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,  10000,  "CustomerA",  "ABC");
         logger.info("{}", signedTransactionFlowHandle);
 
 

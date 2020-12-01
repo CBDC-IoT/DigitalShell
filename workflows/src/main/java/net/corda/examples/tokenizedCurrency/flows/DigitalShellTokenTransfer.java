@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.IdentityService;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
@@ -20,16 +21,16 @@ public class DigitalShellTokenTransfer {
         @InitiatingFlow
         @StartableByRPC
         public static class Initiator extends FlowLogic<SignedTransaction> {
-            private final Party issuer;
+            private final String issuerString;
             private final int amount;
-            private final Party receiver;
+            private final String receiverString;
             private final String address;
             private final String original_address;
 
-            public Initiator(Party issuer, int amount, Party receiver, String originalAddress, String address) {
-                this.issuer  = issuer;
+            public Initiator(String issuer, int amount, String receiver, String originalAddress, String address) {
+                this.issuerString  = issuer;
                 this.amount = amount;
-                this.receiver = receiver;
+                this.receiverString = receiver;
                 this.address = address;
                 this.original_address = originalAddress;
             }
@@ -37,6 +38,10 @@ public class DigitalShellTokenTransfer {
             @Override
             @Suspendable
             public SignedTransaction call() throws FlowException {
+                IdentityService identityService = getServiceHub().getIdentityService();
+                Party issuer=identityService.partiesFromName(issuerString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
+                Party receiver=identityService.partiesFromName(receiverString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+receiverString+"party not found"));
+
                 List<StateAndRef<DigitalShellTokenState>> allTokenStateAndRefs =
                         getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class).getStates();
 

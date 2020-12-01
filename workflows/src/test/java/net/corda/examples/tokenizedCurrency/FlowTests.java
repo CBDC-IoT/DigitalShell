@@ -1,6 +1,8 @@
 package net.corda.examples.tokenizedCurrency;
 
 import com.google.common.collect.ImmutableList;
+import net.corda.core.concurrent.CordaFuture;
+import net.corda.examples.tokenizedCurrency.flows.DigitalShellTokenTransfer;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.After;
@@ -24,6 +26,7 @@ public class FlowTests {
 
     @Test
     public void dummyTest() {
+
 
     }
 }
