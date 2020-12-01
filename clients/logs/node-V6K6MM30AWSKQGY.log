@@ -1,0 +1,342 @@
+[INFO ] 2020-10-28T07:14:33,789 [main] RPCClient - Failed Startup took 2938 msec
+[WARN ] 2020-10-28T07:17:01,469 [background-preinit] Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+[INFO ] 2020-10-28T07:17:01,513 [main] Starter - Starting Starter on V6K6MM30AWSKQGY with PID 17516 (G:\HSBC\cordapp-template-java\clients\build\classes\java\main started by Administrator in G:\HSBC\cordapp-template-java\clients)
+[INFO ] 2020-10-28T07:17:01,514 [main] Starter - No active profile set, falling back to default profiles: default
+[INFO ] 2020-10-28T07:17:01,566 [main] AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@1b75c2e3: startup date [Wed Oct 28 15:17:01 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:17:03,174 [main] TomcatWebServer - Tomcat initialized with port(s): 10050 (http)
+[INFO ] 2020-10-28T07:17:03,189 [main] Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:17:03,202 [main] StandardService - Starting service [Tomcat]
+[INFO ] 2020-10-28T07:17:03,203 [main] StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.31
+[INFO ] 2020-10-28T07:17:03,214 [localhost-startStop-1] AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\Program Files\Java\jdk1.8.0_261\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;E:\Program Files\Java\jdk1.8.0_201\bin;E:\Program Files\Java\jdk1.8.0_201\jre\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;E:\Program Files (x86)\IBM\SPSS\Statistics\JRE\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files\MySQL\MySQL Server 5.7\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;E:\Program Files\apache-maven-3.6.1\bin;E:\Go\bin;E:\Anaconda\envs\Python37\Scripts;E:\Program Files\phantomjs-2.1.1-windows\bin;E:\Anaconda\envs\Anaconda2\Lib\site-packages\graphlab;G:\sql server\110\DTS\Binn\;G:\sql server\sql server86\110\Tools\Binn\;G:\sql server\110\Tools\Binn\;G:\sql server\sql server86\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\;G:\sql server\sql server86\110\DTS\Binn\;E:\Program Files\Git\cmd;E:\Anaconda\envs\Python37;E:\Anaconda\envs\Python37\Scripts\pip;E:\Program Files\PuTTY\;E:\Program Files\nodejs\;G:\Program Files\gradle-6.6\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\go\bin;E:\Program Files\JetBrains\GoLand 2019.1\bin;;E:\Program Files\Boot2Docker for Windows;E:\Program Files\Docker Toolbox;F:\Program Files\texlive\2019\bin\win32;E:\Anaconda3\Library\bin;E:\Anaconda3;E:\Anaconda3\Scripts;E:\Program Files\JetBrains\PyCharm 2019.3.3\bin;;C:\Users\Administrator\AppData\Roaming\npm;E:\Program Files\nodejs;E:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;.]
+[INFO ] 2020-10-28T07:17:03,436 [localhost-startStop-1] [/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 2020-10-28T07:17:03,437 [localhost-startStop-1] ContextLoader - Root WebApplicationContext: initialization completed in 1875 ms
+[INFO ] 2020-10-28T07:17:03,560 [localhost-startStop-1] ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+[INFO ] 2020-10-28T07:17:03,566 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+[INFO ] 2020-10-28T07:17:03,567 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[INFO ] 2020-10-28T07:17:03,567 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[INFO ] 2020-10-28T07:17:03,567 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+[INFO ] 2020-10-28T07:17:09,546 [main] RPCClient - Failed Startup took 2748 msec
+[WARN ] 2020-10-28T07:17:09,547 [main] AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'controller' defined in file [G:\HSBC\cordapp-template-java\clients\build\classes\java\main\com\template\webserver\Controller.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+[INFO ] 2020-10-28T07:17:09,549 [main] StandardService - Stopping service [Tomcat]
+[INFO ] 2020-10-28T07:17:09,560 [main] ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+[ERROR] 2020-10-28T07:17:09,563 [main] SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'controller' defined in file [G:\HSBC\cordapp-template-java\clients\build\classes\java\main\com\template\webserver\Controller.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:729) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:192) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1274) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1131) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:541) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:760) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:869) ~[spring-context-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:550) ~[spring-context-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:140) ~[spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:759) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:395) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at com.template.webserver.Starter.main(Starter.java:21) [main/:?]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+Caused by: net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at net.corda.client.rpc.internal.RPCClientProxyHandler.start(RPCClientProxyHandler.kt:282) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:93) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:32) ~[corda-rpc-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:225) ~[corda-core-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:215) ~[corda-core-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient.start(RPCClient.kt:72) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:621) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:576) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:530) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start$default(CordaRPCClient.kt:528) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt) ~[corda-rpc-4.6.jar:?]
+	at com.template.webserver.NodeRPCConnection.initialiseNodeRPCConnection(NodeRPCConnection.java:40) ~[main/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_261]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_261]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_261]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_261]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:365) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:308) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:135) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+Caused by: org.apache.activemq.artemis.api.core.ActiveMQNotConnectedException: AMQ119007: Cannot connect to server(s). Tried with all available servers.
+	at org.apache.activemq.artemis.core.client.impl.ServerLocatorImpl.createSessionFactory(ServerLocatorImpl.java:797) ~[artemis-core-client-2.6.2.jar:2.6.2]
+	at net.corda.client.rpc.internal.RPCClientProxyHandler.start(RPCClientProxyHandler.kt:280) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:93) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:32) ~[corda-rpc-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:225) ~[corda-core-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:215) ~[corda-core-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient.start(RPCClient.kt:72) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:621) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:576) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:530) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start$default(CordaRPCClient.kt:528) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt) ~[corda-rpc-4.6.jar:?]
+	at com.template.webserver.NodeRPCConnection.initialiseNodeRPCConnection(NodeRPCConnection.java:40) ~[main/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_261]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_261]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_261]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_261]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:365) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:308) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:135) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+[INFO ] 2020-10-28T07:23:34,661 [main] RPCClient - Failed Startup took 3103 msec
+[INFO ] 2020-10-28T07:24:05,618 [main] Starter - Starting Starter on V6K6MM30AWSKQGY with PID 10624 (G:\HSBC\cordapp-template-java\clients\build\classes\java\main started by Administrator in G:\HSBC\cordapp-template-java\clients)
+[INFO ] 2020-10-28T07:24:05,625 [main] Starter - No active profile set, falling back to default profiles: default
+[WARN ] 2020-10-28T07:24:05,640 [background-preinit] Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+[INFO ] 2020-10-28T07:24:05,691 [main] AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@babafc2: startup date [Wed Oct 28 15:24:05 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:24:07,515 [main] TomcatWebServer - Tomcat initialized with port(s): 10050 (http)
+[INFO ] 2020-10-28T07:24:07,541 [main] Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:24:07,552 [main] StandardService - Starting service [Tomcat]
+[INFO ] 2020-10-28T07:24:07,553 [main] StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.31
+[INFO ] 2020-10-28T07:24:07,563 [localhost-startStop-1] AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [E:\Program Files\Java\jdk1.8.0_201\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;E:\Program Files\Java\jdk1.8.0_201\bin;E:\Program Files\Java\jdk1.8.0_201\jre\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;E:\Program Files (x86)\IBM\SPSS\Statistics\JRE\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files\MySQL\MySQL Server 5.7\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;E:\Program Files\apache-maven-3.6.1\bin;E:\Go\bin;E:\Anaconda\envs\Python37\Scripts;E:\Program Files\phantomjs-2.1.1-windows\bin;E:\Anaconda\envs\Anaconda2\Lib\site-packages\graphlab;G:\sql server\110\DTS\Binn\;G:\sql server\sql server86\110\Tools\Binn\;G:\sql server\110\Tools\Binn\;G:\sql server\sql server86\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\;G:\sql server\sql server86\110\DTS\Binn\;E:\Program Files\Git\cmd;E:\Anaconda\envs\Python37;E:\Anaconda\envs\Python37\Scripts\pip;E:\Program Files\PuTTY\;E:\Program Files\nodejs\;G:\Program Files\gradle-6.6\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\go\bin;E:\Program Files\JetBrains\GoLand 2019.1\bin;;E:\Program Files\Boot2Docker for Windows;E:\Program Files\Docker Toolbox;F:\Program Files\texlive\2019\bin\win32;E:\Anaconda3\Library\bin;E:\Anaconda3;E:\Anaconda3\Scripts;E:\Program Files\JetBrains\PyCharm 2019.3.3\bin;;C:\Users\Administrator\AppData\Roaming\npm;E:\Program Files\nodejs;E:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;.]
+[INFO ] 2020-10-28T07:24:07,819 [localhost-startStop-1] [/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 2020-10-28T07:24:07,820 [localhost-startStop-1] ContextLoader - Root WebApplicationContext: initialization completed in 2133 ms
+[INFO ] 2020-10-28T07:24:07,955 [localhost-startStop-1] ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+[INFO ] 2020-10-28T07:24:07,960 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+[INFO ] 2020-10-28T07:24:07,960 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[INFO ] 2020-10-28T07:24:07,960 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[INFO ] 2020-10-28T07:24:07,960 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+[INFO ] 2020-10-28T07:24:14,404 [main] RPCClient - Failed Startup took 2850 msec
+[WARN ] 2020-10-28T07:24:14,406 [main] AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'controller' defined in file [G:\HSBC\cordapp-template-java\clients\build\classes\java\main\com\template\webserver\Controller.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+[INFO ] 2020-10-28T07:24:14,409 [main] StandardService - Stopping service [Tomcat]
+[INFO ] 2020-10-28T07:24:14,549 [main] ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+[ERROR] 2020-10-28T07:24:14,553 [main] SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'controller' defined in file [G:\HSBC\cordapp-template-java\clients\build\classes\java\main\com\template\webserver\Controller.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:729) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:192) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1274) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1131) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:541) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:760) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:869) ~[spring-context-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:550) ~[spring-context-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:140) ~[spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:759) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:395) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327) [spring-boot-2.0.2.RELEASE.jar:2.0.2.RELEASE]
+	at com.template.webserver.Starter.main(Starter.java:21) [main/:?]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'nodeRPCConnection': Invocation of init method failed; nested exception is net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+Caused by: net.corda.client.rpc.RPCException: Cannot connect to server(s). Tried with all available servers.
+	at net.corda.client.rpc.internal.RPCClientProxyHandler.start(RPCClientProxyHandler.kt:282) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:93) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:32) ~[corda-rpc-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:225) ~[corda-core-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:215) ~[corda-core-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient.start(RPCClient.kt:72) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:621) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:576) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:530) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start$default(CordaRPCClient.kt:528) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt) ~[corda-rpc-4.6.jar:?]
+	at com.template.webserver.NodeRPCConnection.initialiseNodeRPCConnection(NodeRPCConnection.java:40) ~[main/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_201]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_201]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_201]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_201]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:365) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:308) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:135) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+Caused by: org.apache.activemq.artemis.api.core.ActiveMQNotConnectedException: AMQ119007: Cannot connect to server(s). Tried with all available servers.
+	at org.apache.activemq.artemis.core.client.impl.ServerLocatorImpl.createSessionFactory(ServerLocatorImpl.java:797) ~[artemis-core-client-2.6.2.jar:2.6.2]
+	at net.corda.client.rpc.internal.RPCClientProxyHandler.start(RPCClientProxyHandler.kt:280) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:93) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient$start$1.invoke(RPCClient.kt:32) ~[corda-rpc-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:225) ~[corda-core-4.6.jar:?]
+	at net.corda.core.internal.InternalUtils.logElapsedTime(InternalUtils.kt:215) ~[corda-core-4.6.jar:?]
+	at net.corda.client.rpc.internal.RPCClient.start(RPCClient.kt:72) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:621) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:576) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt:530) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start$default(CordaRPCClient.kt:528) ~[corda-rpc-4.6.jar:?]
+	at net.corda.client.rpc.CordaRPCClient.start(CordaRPCClient.kt) ~[corda-rpc-4.6.jar:?]
+	at com.template.webserver.NodeRPCConnection.initialiseNodeRPCConnection(NodeRPCConnection.java:40) ~[main/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_201]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_201]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_201]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_201]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:365) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:308) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:135) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:422) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1698) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:579) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:501) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:317) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:228) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:315) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:251) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1138) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1065) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:815) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:721) ~[spring-beans-5.0.6.RELEASE.jar:5.0.6.RELEASE]
+	... 17 more
+[INFO ] 2020-10-28T07:27:05,058 [main] RPCClient - Startup took 2784 msec
+[INFO ] 2020-10-28T07:27:05,371 [main] Client - [NodeInfo(addresses=[localhost:10005], legalIdentitiesAndCerts=[O=PartyA, L=London, C=GB], platformVersion=8, serial=1603869698874), NodeInfo(addresses=[localhost:10002], legalIdentitiesAndCerts=[O=Notary, L=London, C=GB], platformVersion=8, serial=1603869697840), NodeInfo(addresses=[localhost:10008], legalIdentitiesAndCerts=[O=PartyB, L=New York, C=US], platformVersion=8, serial=1603869699203)]
+[INFO ] 2020-10-28T07:27:05,383 [main] Client - O=PartyA, L=London, C=GB
+[WARN ] 2020-10-28T07:29:40,989 [background-preinit] Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+[INFO ] 2020-10-28T07:29:41,133 [main] Starter - Starting Starter on V6K6MM30AWSKQGY with PID 18380 (G:\HSBC\cordapp-template-java\clients\build\classes\java\main started by Administrator in G:\HSBC\cordapp-template-java\clients)
+[INFO ] 2020-10-28T07:29:41,134 [main] Starter - No active profile set, falling back to default profiles: default
+[INFO ] 2020-10-28T07:29:41,229 [main] AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@babafc2: startup date [Wed Oct 28 15:29:41 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:29:43,101 [main] TomcatWebServer - Tomcat initialized with port(s): 10050 (http)
+[INFO ] 2020-10-28T07:29:43,121 [main] Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:29:43,137 [main] StandardService - Starting service [Tomcat]
+[INFO ] 2020-10-28T07:29:43,138 [main] StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.31
+[INFO ] 2020-10-28T07:29:43,156 [localhost-startStop-1] AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [E:\Program Files\Java\jdk1.8.0_201\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;E:\Program Files\Java\jdk1.8.0_201\bin;E:\Program Files\Java\jdk1.8.0_201\jre\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;E:\Program Files (x86)\IBM\SPSS\Statistics\JRE\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files\MySQL\MySQL Server 5.7\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;E:\Program Files\apache-maven-3.6.1\bin;E:\Go\bin;E:\Anaconda\envs\Python37\Scripts;E:\Program Files\phantomjs-2.1.1-windows\bin;E:\Anaconda\envs\Anaconda2\Lib\site-packages\graphlab;G:\sql server\110\DTS\Binn\;G:\sql server\sql server86\110\Tools\Binn\;G:\sql server\110\Tools\Binn\;G:\sql server\sql server86\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\;G:\sql server\sql server86\110\DTS\Binn\;E:\Program Files\Git\cmd;E:\Anaconda\envs\Python37;E:\Anaconda\envs\Python37\Scripts\pip;E:\Program Files\PuTTY\;E:\Program Files\nodejs\;G:\Program Files\gradle-6.6\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\go\bin;E:\Program Files\JetBrains\GoLand 2019.1\bin;;E:\Program Files\Boot2Docker for Windows;E:\Program Files\Docker Toolbox;F:\Program Files\texlive\2019\bin\win32;E:\Anaconda3\Library\bin;E:\Anaconda3;E:\Anaconda3\Scripts;E:\Program Files\JetBrains\PyCharm 2019.3.3\bin;;C:\Users\Administrator\AppData\Roaming\npm;E:\Program Files\nodejs;E:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;.]
+[INFO ] 2020-10-28T07:29:43,605 [localhost-startStop-1] [/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 2020-10-28T07:29:43,605 [localhost-startStop-1] ContextLoader - Root WebApplicationContext: initialization completed in 2393 ms
+[INFO ] 2020-10-28T07:29:43,810 [localhost-startStop-1] ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+[INFO ] 2020-10-28T07:29:43,822 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+[INFO ] 2020-10-28T07:29:43,823 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[INFO ] 2020-10-28T07:29:43,823 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[INFO ] 2020-10-28T07:29:43,824 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+[INFO ] 2020-10-28T07:29:50,353 [main] RPCClient - Startup took 2939 msec
+[INFO ] 2020-10-28T07:29:50,451 [main] SimpleUrlHandlerMapping - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:29:50,693 [main] RequestMappingHandlerAdapter - Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@babafc2: startup date [Wed Oct 28 15:29:41 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:29:51,030 [main] RequestMappingHandlerMapping - Mapped "{[/templateendpoint],methods=[GET],produces=[text/plain]}" onto private java.lang.String com.template.webserver.Controller.templateendpoint()
+[INFO ] 2020-10-28T07:29:51,033 [main] RequestMappingHandlerMapping - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+[INFO ] 2020-10-28T07:29:51,034 [main] RequestMappingHandlerMapping - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+[INFO ] 2020-10-28T07:29:51,062 [main] SimpleUrlHandlerMapping - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:29:51,063 [main] SimpleUrlHandlerMapping - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:29:51,134 [main] WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+[INFO ] 2020-10-28T07:29:54,121 [main] AnnotationMBeanExporter - Registering beans for JMX exposure on startup
+[INFO ] 2020-10-28T07:29:54,138 [main] Http11NioProtocol - Starting ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:29:54,142 [main] NioSelectorPool - Using a shared selector for servlet write/read
+[INFO ] 2020-10-28T07:29:54,172 [main] TomcatWebServer - Tomcat started on port(s): 10050 (http) with context path ''
+[INFO ] 2020-10-28T07:29:54,176 [main] Starter - Started Starter in 14.127 seconds (JVM running for 15.023)
+[INFO ] 2020-10-28T07:30:17,933 [http-nio-10050-exec-1] [/] - Initializing Spring FrameworkServlet 'dispatcherServlet'
+[INFO ] 2020-10-28T07:30:17,934 [http-nio-10050-exec-1] DispatcherServlet - FrameworkServlet 'dispatcherServlet': initialization started
+[INFO ] 2020-10-28T07:30:17,961 [http-nio-10050-exec-1] DispatcherServlet - FrameworkServlet 'dispatcherServlet': initialization completed in 27 ms
+[WARN ] 2020-10-28T07:41:42,595 [Thread-1 (ActiveMQ-client-factory-threads-38625764)] RPCClientProxyHandler - Terminating observables.
+[INFO ] 2020-10-28T07:53:12,286 [main] RPCClient - Startup took 2845 msec
+[INFO ] 2020-10-28T07:53:12,647 [main] Client - [NodeInfo(addresses=[localhost:10005], legalIdentitiesAndCerts=[O=PartyA, L=London, C=GB], platformVersion=8, serial=1603871338458), NodeInfo(addresses=[localhost:10002], legalIdentitiesAndCerts=[O=Notary, L=London, C=GB], platformVersion=8, serial=1603871338929), NodeInfo(addresses=[localhost:10008], legalIdentitiesAndCerts=[O=PartyB, L=New York, C=US], platformVersion=8, serial=1603871342663)]
+[INFO ] 2020-10-28T07:53:12,672 [main] Client - O=PartyA, L=London, C=GB
+[INFO ] 2020-10-28T07:53:13,427 [main] Client - FlowHandleImpl(id=[f517adc7-a887-410f-8e91-1df575eeb883], returnValue=net.corda.core.internal.concurrent.CordaFutureImpl@4f7c0be3)
+[WARN ] 2020-10-28T07:57:18,363 [background-preinit] Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+[INFO ] 2020-10-28T07:57:18,468 [main] Starter - Starting Starter on V6K6MM30AWSKQGY with PID 14148 (G:\HSBC\cordapp-template-java\clients\build\classes\java\main started by Administrator in G:\HSBC\cordapp-template-java\clients)
+[INFO ] 2020-10-28T07:57:18,469 [main] Starter - No active profile set, falling back to default profiles: default
+[INFO ] 2020-10-28T07:57:18,553 [main] AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@babafc2: startup date [Wed Oct 28 15:57:18 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:57:20,259 [main] TomcatWebServer - Tomcat initialized with port(s): 10050 (http)
+[INFO ] 2020-10-28T07:57:20,276 [main] Http11NioProtocol - Initializing ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:57:20,288 [main] StandardService - Starting service [Tomcat]
+[INFO ] 2020-10-28T07:57:20,289 [main] StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.31
+[INFO ] 2020-10-28T07:57:20,300 [localhost-startStop-1] AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [E:\Program Files\Java\jdk1.8.0_201\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;E:\Program Files\Java\jdk1.8.0_201\bin;E:\Program Files\Java\jdk1.8.0_201\jre\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;E:\Program Files (x86)\IBM\SPSS\Statistics\JRE\bin;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files\MySQL\MySQL Server 5.7\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;E:\Program Files\apache-maven-3.6.1\bin;E:\Go\bin;E:\Anaconda\envs\Python37\Scripts;E:\Program Files\phantomjs-2.1.1-windows\bin;E:\Anaconda\envs\Anaconda2\Lib\site-packages\graphlab;G:\sql server\110\DTS\Binn\;G:\sql server\sql server86\110\Tools\Binn\;G:\sql server\110\Tools\Binn\;G:\sql server\sql server86\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\;G:\sql server\sql server86\110\DTS\Binn\;E:\Program Files\Git\cmd;E:\Anaconda\envs\Python37;E:\Anaconda\envs\Python37\Scripts\pip;E:\Program Files\PuTTY\;E:\Program Files\nodejs\;G:\Program Files\gradle-6.6\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\go\bin;E:\Program Files\JetBrains\GoLand 2019.1\bin;;E:\Program Files\Boot2Docker for Windows;E:\Program Files\Docker Toolbox;F:\Program Files\texlive\2019\bin\win32;E:\Anaconda3\Library\bin;E:\Anaconda3;E:\Anaconda3\Scripts;E:\Program Files\JetBrains\PyCharm 2019.3.3\bin;;C:\Users\Administrator\AppData\Roaming\npm;E:\Program Files\nodejs;E:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;.]
+[INFO ] 2020-10-28T07:57:20,553 [localhost-startStop-1] [/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 2020-10-28T07:57:20,553 [localhost-startStop-1] ContextLoader - Root WebApplicationContext: initialization completed in 2004 ms
+[INFO ] 2020-10-28T07:57:20,686 [localhost-startStop-1] ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+[INFO ] 2020-10-28T07:57:20,692 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+[INFO ] 2020-10-28T07:57:20,692 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[INFO ] 2020-10-28T07:57:20,692 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[INFO ] 2020-10-28T07:57:20,692 [localhost-startStop-1] FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+[INFO ] 2020-10-28T07:57:26,416 [main] RPCClient - Startup took 2316 msec
+[INFO ] 2020-10-28T07:57:26,525 [main] SimpleUrlHandlerMapping - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:57:26,762 [main] RequestMappingHandlerAdapter - Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@babafc2: startup date [Wed Oct 28 15:57:18 CST 2020]; root of context hierarchy
+[INFO ] 2020-10-28T07:57:26,869 [main] RequestMappingHandlerMapping - Mapped "{[/templateendpoint],methods=[GET],produces=[text/plain]}" onto private java.lang.String com.template.webserver.Controller.templateendpoint()
+[INFO ] 2020-10-28T07:57:26,874 [main] RequestMappingHandlerMapping - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+[INFO ] 2020-10-28T07:57:26,875 [main] RequestMappingHandlerMapping - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+[INFO ] 2020-10-28T07:57:26,915 [main] SimpleUrlHandlerMapping - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:57:26,915 [main] SimpleUrlHandlerMapping - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[INFO ] 2020-10-28T07:57:26,992 [main] WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+[INFO ] 2020-10-28T07:57:27,161 [main] AnnotationMBeanExporter - Registering beans for JMX exposure on startup
+[INFO ] 2020-10-28T07:57:27,176 [main] Http11NioProtocol - Starting ProtocolHandler ["http-nio-10050"]
+[INFO ] 2020-10-28T07:57:27,180 [main] NioSelectorPool - Using a shared selector for servlet write/read
+[INFO ] 2020-10-28T07:57:27,207 [main] TomcatWebServer - Tomcat started on port(s): 10050 (http) with context path ''
+[INFO ] 2020-10-28T07:57:27,214 [main] Starter - Started Starter in 9.819 seconds (JVM running for 10.788)
+[INFO ] 2020-10-28T07:57:52,855 [http-nio-10050-exec-1] [/] - Initializing Spring FrameworkServlet 'dispatcherServlet'
+[INFO ] 2020-10-28T07:57:52,856 [http-nio-10050-exec-1] DispatcherServlet - FrameworkServlet 'dispatcherServlet': initialization started
+[INFO ] 2020-10-28T07:57:52,877 [http-nio-10050-exec-1] DispatcherServlet - FrameworkServlet 'dispatcherServlet': initialization completed in 21 ms
+[INFO ] 2020-10-28T07:57:53,432 [http-nio-10050-exec-1] Controller - FlowHandleImpl(id=[4eb8a939-9829-4e5e-8960-796b41b11eeb], returnValue=net.corda.core.internal.concurrent.CordaFutureImpl@1bd6819a)
+[WARN ] 2020-10-28T08:01:27,339 [Thread-1 (ActiveMQ-client-factory-threads-1506703662)] RPCClientProxyHandler - Terminating observables.
+[INFO ] 2020-10-28T08:27:02,205 [main] RPCClient - Startup took 4459 msec
+[INFO ] 2020-10-28T08:27:02,654 [main] Client - [NodeInfo(addresses=[localhost:10005], legalIdentitiesAndCerts=[O=Bank, L=London, C=GB], platformVersion=7, serial=1603873187510), NodeInfo(addresses=[localhost:10012], legalIdentitiesAndCerts=[O=CustomerB, L=Paris, C=FR], platformVersion=7, serial=1603873178403), NodeInfo(addresses=[localhost:10002], legalIdentitiesAndCerts=[O=Notary, L=London, C=GB], platformVersion=7, serial=1603873189035), NodeInfo(addresses=[localhost:10008], legalIdentitiesAndCerts=[O=CustomerA, L=New York, C=US], platformVersion=7, serial=1603873185516)]
+[INFO ] 2020-10-28T08:27:02,685 [main] Client - O=Bank, L=London, C=GB
+[INFO ] 2020-10-28T08:29:36,541 [main] RPCClient - Startup took 2852 msec
+[INFO ] 2020-10-28T08:29:36,862 [main] Client - [NodeInfo(addresses=[localhost:10005], legalIdentitiesAndCerts=[O=Bank, L=London, C=GB], platformVersion=7, serial=1603873187510), NodeInfo(addresses=[localhost:10012], legalIdentitiesAndCerts=[O=CustomerB, L=Paris, C=FR], platformVersion=7, serial=1603873178403), NodeInfo(addresses=[localhost:10002], legalIdentitiesAndCerts=[O=Notary, L=London, C=GB], platformVersion=7, serial=1603873189035), NodeInfo(addresses=[localhost:10008], legalIdentitiesAndCerts=[O=CustomerA, L=New York, C=US], platformVersion=7, serial=1603873185516)]
+[INFO ] 2020-10-28T08:29:36,891 [main] Client - O=Bank, L=London, C=GB
+[INFO ] 2020-10-28T08:31:24,371 [main] RPCClient - Startup took 3257 msec
+[INFO ] 2020-10-28T08:31:24,709 [main] Client - [NodeInfo(addresses=[localhost:10005], legalIdentitiesAndCerts=[O=Bank, L=London, C=GB], platformVersion=7, serial=1603873187510), NodeInfo(addresses=[localhost:10012], legalIdentitiesAndCerts=[O=CustomerB, L=Paris, C=FR], platformVersion=7, serial=1603873178403), NodeInfo(addresses=[localhost:10002], legalIdentitiesAndCerts=[O=Notary, L=London, C=GB], platformVersion=7, serial=1603873189035), NodeInfo(addresses=[localhost:10008], legalIdentitiesAndCerts=[O=CustomerA, L=New York, C=US], platformVersion=7, serial=1603873185516)]
+[INFO ] 2020-10-28T08:31:24,737 [main] Client - O=Bank, L=London, C=GB
+[INFO ] 2020-10-28T08:31:25,580 [main] Client - FlowHandleImpl(id=[585020b7-b9d8-46ad-89c0-a5e3e1439c4b], returnValue=net.corda.core.internal.concurrent.CordaFutureImpl@4a325eb9)
