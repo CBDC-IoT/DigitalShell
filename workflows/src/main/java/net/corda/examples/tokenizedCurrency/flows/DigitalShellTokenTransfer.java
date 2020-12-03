@@ -4,6 +4,7 @@ import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
+import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.core.transactions.SignedTransaction;
@@ -42,6 +43,9 @@ public class DigitalShellTokenTransfer {
                 Party issuer=identityService.partiesFromName(issuerString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
                 Party receiver=identityService.partiesFromName(receiverString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+receiverString+"party not found"));
 
+                final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary2,L=Guangzhou,C=CN")); // METHOD 2
+                final Party originalNotary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
+
                 List<StateAndRef<DigitalShellTokenState>> allTokenStateAndRefs =
                         getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class).getStates();
 
@@ -54,6 +58,14 @@ public class DigitalShellTokenTransfer {
                             //Filter according to issuer and address
                             if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
                                 //Filter inputStates for spending
+                                try {
+                                    System.out.println(originalNotary);
+                                    System.out.println(notary);
+                                    subFlow(new SwitchNotaryFlow(tokenStateStateAndRef,notary));
+                                } catch (FlowException e) {
+                                    e.printStackTrace();
+                                }
+
                                 if(totalTokenAvailable.get() < amount)
                                     inputStateAndRef.add(tokenStateStateAndRef);
 
@@ -78,10 +90,11 @@ public class DigitalShellTokenTransfer {
 
                 DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
 
-                TransactionBuilder txBuilder = new TransactionBuilder(getServiceHub().getNetworkMapCache()
-                        .getNotaryIdentities().get(0))
+
+                TransactionBuilder txBuilder = new TransactionBuilder(notary)
                         .addOutputState(outputState)
                         .addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+
                 inputStateAndRef.forEach(txBuilder::addInputState);
 
                 if(change.get() > 0){

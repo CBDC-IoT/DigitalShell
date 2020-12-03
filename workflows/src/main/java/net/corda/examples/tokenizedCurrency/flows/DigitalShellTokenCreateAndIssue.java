@@ -3,6 +3,7 @@ package net.corda.examples.tokenizedCurrency.flows;
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.flows.*;
+import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
@@ -33,10 +34,9 @@ public class DigitalShellTokenCreateAndIssue {
              *
              *  * - For production you always want to use Method 2 as it guarantees the expected notary is returned.
              */
-            final Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0); // METHOD 1
-            // final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary,L=London,C=GB")); // METHOD 2
+//            final Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0); // METHOD 1
+            final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
 
-            //create token type
             DigitalShellTokenState digitalShellTokenState = new DigitalShellTokenState( getOurIdentity(),owner, amount, address);
 
             //wrap it with transaction state specifying the notary
@@ -71,5 +71,7 @@ public class DigitalShellTokenCreateAndIssue {
             return subFlow(new ReceiveFinalityFlow(otherPartySession));
         }
     }
+
+
 
 }

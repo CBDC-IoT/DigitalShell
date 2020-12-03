@@ -128,12 +128,22 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapp project(':workflows')
     }
     node {
-        name "O=Notary,L=Guangzhou,C=CN"
+        name "O=Notary1,L=Guangzhou,C=CN"
         notary = [validating : false]
         p2pPort 10002
         rpcSettings {
             address("localhost:10003")
             adminAddress("localhost:10043")
+        }
+        cordapps = []
+    }
+    node {
+        name "O=Notary2,L=Guangzhou,C=CN"
+        notary = [validating : false]
+        p2pPort 10016
+        rpcSettings {
+            address("localhost:10017")
+            adminAddress("localhost:10018")
         }
         cordapps = []
     }
