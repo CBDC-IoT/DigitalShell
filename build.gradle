@@ -190,47 +190,47 @@ task deployNodesPro(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     node {
         name "O=Notary1,L=Guangzhou,C=CN"
         notary = [validating : false]
-        p2pPort 10002
+        p2pAddress "161.189.108.227:10050"
         rpcSettings {
-            address("161.189.108.227:10003")
-            adminAddress("161.189.108.227:10043")
+            address("161.189.108.227:10051")
+            adminAddress("161.189.108.227:10052")
         }
         cordapps = []
     }
     node {
         name "O=Notary2,L=Guangzhou,C=CN"
         notary = [validating : false]
-        p2pPort 10016
+        p2pAddress "161.189.108.227:10053"
         rpcSettings {
-            address("161.189.108.227:10017")
-            adminAddress("161.189.108.227:10018")
+            address("161.189.108.227:10054")
+            adminAddress("161.189.108.227:10055")
         }
         cordapps = []
     }
     node {
         name "O=Bank,L=Guangzhou,C=CN"
-        p2pPort 10005
+        p2pAddress "161.189.108.227:10056"
         rpcSettings {
-            address("161.189.108.227:10006")
-            adminAddress("161.189.108.227:10046")
+            address("161.189.108.227:10057")
+            adminAddress("161.189.108.227:10058")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Canteen,L=Guangzhou,C=CN"
-        p2pPort 10008
+        p2pAddress "52.82.42.149:10050"
         rpcSettings {
-            address("52.82.42.149:10009")
-            adminAddress("52.82.42.149:10049")
+            address("52.82.42.149:10051")
+            adminAddress("52.82.42.149:10052")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=CustomerA,L=Guangzhou,C=CN"
-        p2pPort 10012
+        p2pAddress "161.189.113.238:10050"
         rpcSettings {
-            address("161.189.113.238:10013")
-            adminAddress("161.189.113.238:10014")
+            address("161.189.113.238:10051")
+            adminAddress("161.189.113.238:10052")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
