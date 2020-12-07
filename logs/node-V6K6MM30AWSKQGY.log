@@ -1,0 +1,18 @@
+[INFO ] 2020-12-04T02:46:11,163Z [driver-pool-thread-0] network.NodeInfoFilesCopier. - Now watching: G:\HSBC\DigitalShell\build\node-driver\20201204-024606.273\NotaryService {}
+[INFO ] 2020-12-04T02:46:11,785Z [driver-pool-thread-1] internal.DriverDSLImpl. - Starting in-process Node Notary Service {}
+[INFO ] 2020-12-04T02:46:11,792Z [driver-pool-thread-0] network.NodeInfoFilesCopier. - Stopped watching: G:\HSBC\DigitalShell\build\node-driver\20201204-024606.273\NotaryService {}
+[ERROR] 2020-12-04T02:46:11,805Z [main] internal.DriverDSLImpl. - Driver shutting down because of exception - No quasar agent: -javaagent:lib/quasar.jar and working directory project root might fix [errorCode=h1u285, moreInformationAt=https://errors.corda.net/OS/4.5/h1u285] {}
+java.lang.IllegalStateException: No quasar agent: -javaagent:lib/quasar.jar and working directory project root might fix
+	at net.corda.testing.node.internal.DriverDSLImpl$Companion$startInProcessNode$1.invoke(DriverDSLImpl.kt:862) ~[corda-node-driver-4.5.jar:?]
+	at net.corda.testing.node.internal.DriverDSLImpl$Companion$startInProcessNode$1.invoke(DriverDSLImpl.kt:781) ~[corda-node-driver-4.5.jar:?]
+	at net.corda.core.internal.concurrent.ValueOrException$DefaultImpls.capture(CordaFutureImpl.kt:146) ~[corda-core-4.5.jar:?]
+	at net.corda.core.internal.concurrent.OpenFuture$DefaultImpls.capture(CordaFutureImpl.kt) ~[corda-core-4.5.jar:?]
+	at net.corda.core.internal.concurrent.CordaFutureImpl.capture(CordaFutureImpl.kt:161) ~[corda-core-4.5.jar:?]
+	at net.corda.core.internal.concurrent.CordaFutureImplKt$fork$$inlined$also$lambda$1.run(CordaFutureImpl.kt:22) ~[corda-core-4.5.jar:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) ~[?:1.8.0_261]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266) ~[?:1.8.0_261]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) ~[?:1.8.0_261]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) ~[?:1.8.0_261]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) ~[?:1.8.0_261]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) ~[?:1.8.0_261]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_261]

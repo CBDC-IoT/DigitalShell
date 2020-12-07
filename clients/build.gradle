@@ -53,7 +53,7 @@ task runTemplateServer(type: JavaExec, dependsOn: assemble) {
 
 
 //this is customerA server
-task runTemplateServer1(type: JavaExec, dependsOn: assemble) {
+task runCustomerServer(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.template.webserver.Starter'
     args '--server.port=10051', '--config.rpc.host=localhost', '--config.rpc.port=10013', '--config.rpc.username=user1', '--config.rpc.password=test'

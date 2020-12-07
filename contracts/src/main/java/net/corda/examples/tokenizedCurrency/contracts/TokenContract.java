@@ -80,5 +80,6 @@ public class TokenContract implements Contract {
     public interface Commands extends CommandData {
         class Issue implements Commands { }
         class Transfer implements Commands { }
+        class Redeem implements Commands { }
     }
 }

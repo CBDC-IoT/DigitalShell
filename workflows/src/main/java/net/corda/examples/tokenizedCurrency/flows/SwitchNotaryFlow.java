@@ -47,7 +47,8 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
     public String call() throws FlowException {
         progressTracker.setCurrentStep(QUERYING_VAULT);
         progressTracker.setCurrentStep(INITITATING_TRANSACTION);
-        subFlow(new NotaryChangeFlow<DigitalShellTokenState>(stateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
+        NotaryChangeFlow<DigitalShellTokenState> digitalShellTokenStateNotaryChangeFlow = new NotaryChangeFlow<DigitalShellTokenState>(stateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker());
+
         return "Notary Switched Successfully";
     }
 }

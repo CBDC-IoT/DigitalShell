@@ -190,51 +190,52 @@ task deployNodesPro(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     node {
         name "O=Notary1,L=Guangzhou,C=CN"
         notary = [validating : false]
-        p2pAddress "161.189.108.227:10050"
+        p2pAddress "161.189.108.227:10051"
         rpcSettings {
-            address("161.189.108.227:10051")
-            adminAddress("161.189.108.227:10052")
+            address("localhost:10003")
+            adminAddress("localhost:10043")
         }
         cordapps = []
     }
     node {
         name "O=Notary2,L=Guangzhou,C=CN"
         notary = [validating : false]
-        p2pAddress "161.189.108.227:10053"
+        p2pAddress "161.189.108.227:10052"
         rpcSettings {
-            address("161.189.108.227:10054")
-            adminAddress("161.189.108.227:10055")
+            address("localhost:10017")
+            adminAddress("localhost:10018")
         }
         cordapps = []
     }
     node {
         name "O=Bank,L=Guangzhou,C=CN"
-        p2pAddress "161.189.108.227:10056"
+        p2pAddress "161.189.108.227:10053"
         rpcSettings {
-            address("161.189.108.227:10057")
-            adminAddress("161.189.108.227:10058")
+            address("localhost:10006")
+            adminAddress("localhost:10046")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Canteen,L=Guangzhou,C=CN"
-        p2pAddress "52.82.42.149:10050"
+        p2pAddress "161.189.113.238:10054"
         rpcSettings {
-            address("52.82.42.149:10051")
-            adminAddress("52.82.42.149:10052")
+            address("localhost:10009")
+            adminAddress("localhost:10049")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=CustomerA,L=Guangzhou,C=CN"
-        p2pAddress "161.189.113.238:10050"
+        p2pAddress "52.82.42.149:10055"
         rpcSettings {
-            address("161.189.113.238:10051")
-            adminAddress("161.189.113.238:10052")
+            address("localhost:10013")
+            adminAddress("localhost:10014")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
 }
+
 
 task installQuasar(type: Copy) {
     destinationDir rootProject.file("lib")
