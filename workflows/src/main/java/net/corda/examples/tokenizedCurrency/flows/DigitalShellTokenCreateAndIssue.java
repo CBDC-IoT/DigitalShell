@@ -3,8 +3,8 @@ package net.corda.examples.tokenizedCurrency.flows;
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.flows.*;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.IdentityService;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
@@ -14,15 +14,15 @@ public class DigitalShellTokenCreateAndIssue {
     @InitiatingFlow
     @StartableByRPC
     public static class CreateDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {
-        private Party owner;
         private int amount;
         private String address;
+        private String receiverString;
         // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
-        public CreateDigitalShellTokenFlow(int amount, Party receiver, String address) {
-        this.owner = receiver;
+        public CreateDigitalShellTokenFlow(int amount, String receiver, String address) {
         this.amount = amount;
         this.address = address;
+        this.receiverString = receiver;
         }
 
         @Override
@@ -35,8 +35,8 @@ public class DigitalShellTokenCreateAndIssue {
              *  * - For production you always want to use Method 2 as it guarantees the expected notary is returned.
              */
 //            final Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0); // METHOD 1
-            final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
-
+            IdentityService identityService = getServiceHub().getIdentityService();
+            Party owner=identityService.partiesFromName(receiverString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+receiverString+"party not found"));
             DigitalShellTokenState digitalShellTokenState = new DigitalShellTokenState( getOurIdentity(),owner, amount, address);
 
             //wrap it with transaction state specifying the notary

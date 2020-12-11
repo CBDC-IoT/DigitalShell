@@ -1,4 +1,5 @@
 package com.template.webserver;
+import com.template.webserver.Service.VendingMachineService;
 import net.corda.core.identity.CordaX500Name;
 
 import net.corda.core.messaging.CordaRPCOps;
@@ -6,6 +7,7 @@ import net.corda.examples.tokenizedCurrency.flows.DigitalShellTokenCreateAndIssu
 import net.corda.examples.tokenizedCurrency.flows.DigitalShellTokenTransfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,9 @@ public class Controller {
     private final static Logger logger = LoggerFactory.getLogger(Controller.class);
     private final CordaX500Name me;
 
+    @Autowired
+    VendingMachineService vendingMachineService;
+
     public Controller(NodeRPCConnection rpc) {
         this.proxy = rpc.proxy;
         this.me = proxy.nodeInfo().getLegalIdentities().get(0).getName();
@@ -36,8 +41,6 @@ public class Controller {
                                                         @RequestParam(value = "address") String address) {
 
         try {
-//            proxy.startFlowDynamic(DigitalShellTokenTransfer.Initiator.class,"Bank", 10, "Canteen", "ABC", "D").getReturnValue().get();
-//            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,"Bank", 10, "Canteen", "ABC", "D").getReturnValue().get();
             proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,issuer, amount, receiver, originalAddress, address).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(""+ amount + "DigitalShell has been transferred to "+receiver+" with address of " + address +".");
         } catch (Exception e) {
@@ -60,4 +63,18 @@ public class Controller {
     }
 
 
+    @GetMapping(value =  "/PickFood" , produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestParam(value = "receiver") String receiver,
+                                                        @RequestParam(value = "originalAddress") String originalAddress,
+                                                        @RequestParam(value = "address") String address,
+                                                        @RequestParam(value = "foodName") String foodName) {
+
+        try {
+            Integer amount = vendingMachineService.getFoodPrice(foodName);
+            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,"Bank", amount, receiver, originalAddress, address).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(""+ amount + "DigitalShell has been transferred to " + receiver + " with address of " + address +".");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
