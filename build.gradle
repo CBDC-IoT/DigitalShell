@@ -94,7 +94,6 @@ sourceSets {
 
 dependencies {
     testCompile "junit:junit:$junit_version"
-
     // Corda dependencies.
     cordaCompile "$corda_release_group:corda-core:$corda_release_version"
     cordaCompile "$corda_release_group:corda-node-api:$corda_release_version"
@@ -114,6 +113,8 @@ dependencies {
     cordapp "$tokens_release_group:tokens-workflows:$tokens_release_version"
 
     cordapp "$confidential_id_release_group:ci-workflows:$confidential_id_release_version"
+
+
 }
 
 task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {

@@ -1,8 +1,7 @@
-package net.corda.examples.tokenizedCurrency.flows;
+package net.corda.DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
-
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.CordaX500Name;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 public class DigitalShellTokenTransfer {
 
         @InitiatingFlow
@@ -126,25 +124,14 @@ public class DigitalShellTokenTransfer {
                 * */
 
 
-
-
-
-
-
-
-
-
                 /*
                  * How to choose Notary here
                  * */
 
-
-                TransactionBuilder txBuilder = new TransactionBuilder(originalNotary)
-                        .addOutputState(outputState)
-                        .addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+                TransactionBuilder txBuilder = new TransactionBuilder(notary).addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
                 inputStateAndRef.forEach(txBuilder::addInputState);
-//                time_manager.cut("6");
+
                 if(change.get() > 0){
                     DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), change.get(), original_address);
                     txBuilder.addOutputState(changeState);
@@ -198,3 +185,4 @@ public class DigitalShellTokenTransfer {
         }
 
 }
+

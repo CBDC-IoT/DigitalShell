@@ -1,4 +1,4 @@
-package net.corda.examples.tokenizedCurrency.flows;
+package net.corda.DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.contracts.StateAndRef;

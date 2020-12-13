@@ -1,4 +1,4 @@
-package net.corda.examples.tokenizedCurrency.flows;
+package net.corda.DigitalShell.flows;
 
 import net.corda.core.identity.Party;
 import java.util.HashMap;

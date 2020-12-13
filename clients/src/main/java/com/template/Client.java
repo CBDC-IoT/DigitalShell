@@ -9,11 +9,10 @@ import net.corda.core.messaging.FlowHandle;
 import net.corda.core.node.NodeInfo;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
-import net.corda.examples.tokenizedCurrency.flows.DigitalShellTokenCreateAndIssue;
+import net.corda.DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static net.corda.core.utilities.NetworkHostAndPort.parse;

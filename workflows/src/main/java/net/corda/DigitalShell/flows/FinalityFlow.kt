@@ -1,4 +1,4 @@
-package net.corda.examples.tokenizedCurrency.flows
+package net.corda.DigitalShell.flows
 
 import co.paralleluniverse.fibers.Suspendable
 import net.corda.core.CordaInternal
@@ -136,7 +136,7 @@ class FinalityFlow private constructor(val transaction: SignedTransaction,
                 "that requires only FlowSessions."
 
         object NOTARISING : ProgressTracker.Step("Requesting signature by notary service") {
-            override fun childProgressTracker() =.Client.tracker()
+            override fun childProgressTracker() =NotaryFlow.Client.tracker()
         }
 
         object BROADCASTING : ProgressTracker.Step("Broadcasting transaction to participants")

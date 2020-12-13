@@ -1,4 +1,4 @@
-package net.corda.core.flows
+package net.corda.DigitalShell.flows
 
 import co.paralleluniverse.fibers.Suspendable
 import net.corda.core.CordaInternal
@@ -7,6 +7,7 @@ import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.TimeWindow
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.TransactionSignature
+import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.internal.BackpressureAwareTimedFlow
 import net.corda.core.internal.FetchDataFlow
@@ -86,9 +87,9 @@ class NotaryFlow {
             notaries.forEach {
                 check(serviceHub.networkMapCache.isNotary(it)) { "${it.description()} is not a notary on the network" }
                 // Transaction can combine different identities of the same notary after key rotation.
-                check(it.name == notaryParty.name) {
-                    "Input states and reference input states must have the same Notary as the transaction Notary"
-                }
+//                check(it.name == notaryParty.name) {
+//                    "Input states and reference input states must have the same Notary as the transaction Notary"
+//                }
             }
 
             if (!skipVerification) {
