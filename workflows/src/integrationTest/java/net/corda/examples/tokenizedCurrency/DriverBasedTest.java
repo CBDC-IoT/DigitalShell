@@ -1,8 +1,8 @@
 package net.corda.examples.tokenizedCurrency;
 
 import com.google.common.collect.ImmutableList;
-import net.corda.core.concurrent.CordaFuture;
-import net.corda.core.identity.CordaX500Name;
+import cordaCode.core.concurrent.CordaFuture;
+import cordaCode.core.identity.CordaX500Name;
 import net.corda.testing.core.TestIdentity;
 import net.corda.testing.driver.DriverParameters;
 import net.corda.testing.driver.NodeHandle;

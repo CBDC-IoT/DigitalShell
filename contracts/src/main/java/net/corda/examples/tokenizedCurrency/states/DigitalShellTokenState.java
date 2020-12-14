@@ -1,10 +1,10 @@
 package net.corda.examples.tokenizedCurrency.states;
 
 import com.google.common.collect.ImmutableList;
-import net.corda.core.contracts.BelongsToContract;
-import net.corda.core.contracts.ContractState;
-import net.corda.core.identity.AbstractParty;
-import net.corda.core.identity.Party;
+import cordaCode.core.contracts.BelongsToContract;
+import cordaCode.core.contracts.ContractState;
+import cordaCode.core.identity.AbstractParty;
+import cordaCode.core.identity.Party;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
 import org.jetbrains.annotations.NotNull;
 

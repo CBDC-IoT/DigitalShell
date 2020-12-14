@@ -1,7 +1,7 @@
 package net.corda.examples.tokenizedCurrency.contracts;
-import net.corda.core.contracts.CommandData;
-import net.corda.core.contracts.Contract;
-import net.corda.core.transactions.LedgerTransaction;
+import cordaCode.core.contracts.CommandData;
+import cordaCode.core.contracts.Contract;
+import cordaCode.core.transactions.LedgerTransaction;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
 import org.jetbrains.annotations.NotNull;
 

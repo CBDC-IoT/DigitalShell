@@ -3,8 +3,8 @@ import com.template.webserver.Service.VendingMachineService;
 import net.corda.core.identity.CordaX500Name;
 
 import net.corda.core.messaging.CordaRPCOps;
-import net.corda.DigitalShell.flows.DigitalShellTokenCreateAndIssue;
-import net.corda.DigitalShell.flows.DigitalShellTokenTransfer;
+import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
+import DigitalShell.flows.DigitalShellTokenTransfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -68,6 +68,7 @@ allprojects {
         preserveFileTimestamps = false
         reproducibleFileOrder = true
     }
+    
 }
 
 
@@ -102,7 +103,7 @@ dependencies {
     // CorDapp dependencies.
     cordapp project(":workflows")
     cordapp project(":contracts")
-
+    cordapp project(":workflowKotlin")
     // For logging
     cordaCompile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
     cordaCompile "org.apache.logging.log4j:log4j-web:${log4j_version}"
@@ -127,6 +128,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapp("$confidential_id_release_group:ci-workflows:$confidential_id_release_version")
         cordapp project(':contracts')
         cordapp project(':workflows')
+        cordapp project(":workflowKotlin")
     }
     node {
         name "O=Notary1,L=Guangzhou,C=CN"
