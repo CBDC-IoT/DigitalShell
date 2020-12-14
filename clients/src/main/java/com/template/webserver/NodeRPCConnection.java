@@ -2,7 +2,7 @@ package com.template.webserver;
 
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
-import net.corda.core.messaging.CordaRPCOps;
+import cordaCode.core.messaging.CordaRPCOps;
 import net.corda.core.utilities.NetworkHostAndPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class NodeRPCConnection implements AutoCloseable {
         NetworkHostAndPort rpcAddress = new NetworkHostAndPort(host, rpcPort);
         CordaRPCClient rpcClient = new CordaRPCClient(rpcAddress);
         rpcConnection = rpcClient.start(username, password);
-        proxy = rpcConnection.getProxy();
+        proxy = (CordaRPCOps) rpcConnection.getProxy();
     }
 
     @PreDestroy

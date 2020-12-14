@@ -1,8 +1,8 @@
 package com.template.webserver;
 import com.template.webserver.Service.VendingMachineService;
-import net.corda.core.identity.CordaX500Name;
+import cordaCode.core.identity.CordaX500Name;
 
-import net.corda.core.messaging.CordaRPCOps;
+import cordaCode.core.messaging.CordaRPCOps;
 import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import DigitalShell.flows.DigitalShellTokenTransfer;
 import org.slf4j.Logger;
