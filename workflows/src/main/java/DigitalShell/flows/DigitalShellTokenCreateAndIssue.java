@@ -10,18 +10,20 @@ import net.corda.core.transactions.TransactionBuilder;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
 
+import java.math.BigDecimal;
+
 public class DigitalShellTokenCreateAndIssue {
     @InitiatingFlow
     @StartableByRPC
     public static class CreateDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {
-        private int amount;
+        private BigDecimal amount;
         private String address;
         private String receiverString;
         private int notaryInt;
         // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
-        public CreateDigitalShellTokenFlow(int amount, String receiver, String address, int notary) {
-        this.amount = amount;
+        public CreateDigitalShellTokenFlow(String amount, String receiver, String address, int notary) {
+        this.amount = new BigDecimal(amount);
         this.address = address;
         this.receiverString = receiver;
         this.notaryInt = notary;

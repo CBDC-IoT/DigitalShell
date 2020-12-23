@@ -2,25 +2,41 @@ package DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.AtomicDouble;
+import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
+import net.corda.core.node.services.IdentityService;
+import net.corda.core.node.services.Vault;
+import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class DigitalShellTokenRedeem {
     @InitiatingFlow
     @StartableByRPC
     private static class RedeemDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {
-        private int amount;
-        private String address;
+        private String issuerString;
+        private BigDecimal amount;
+        private String original_address;
         // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
-        public RedeemDigitalShellTokenFlow(int amount , String address) {
-        this.amount = amount;
-        this.address = address;
+        public RedeemDigitalShellTokenFlow(String issuer, int amount , String address) {
+            this.issuerString = issuer;
+            this.amount = new BigDecimal(amount);
+          this.original_address = address;
         }
 
         @Override
@@ -33,22 +49,141 @@ public class DigitalShellTokenRedeem {
              *  * - For production you always want to use Method 2 as it guarantees the expected notary is returned.
              */
 //            final Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0); // METHOD 1
-            final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
-            final Party bank = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Bank,L=Guangzhou,C=CN")); // METHOD 2
+            IdentityService identityService = getServiceHub().getIdentityService();
+            Party issuer=identityService.partiesFromName(issuerString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
 
-            DigitalShellTokenState digitalShellTokenState = new DigitalShellTokenState(bank,bank, amount, address);
+            AtomicDouble change = new AtomicDouble(0);
 
-            //wrap it with transaction state specifying the notary
-//            TransactionState<DigitalShellTokenState> transactionState = new TransactionState<>(digitalShellTokenState, notary);
-            TransactionBuilder txBuilder = new TransactionBuilder();
-            txBuilder.addOutputState(digitalShellTokenState).addCommand(new TokenContract.Commands.Redeem(), ImmutableList.of(getOurIdentity().getOwningKey()));
+            HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(issuer, change, 400);
 
-            txBuilder.verify(getServiceHub());
+            /*
+             * How to choose Notary here
+             * */
 
-            SignedTransaction signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
-            FlowSession receiverSession = initiateFlow(bank);
+            SignedTransaction signedTransaction = null;
+
+            TransactionBuilder txBuilder = getTransactionBuilder(map);
+
+            //output
+            DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, issuer, amount, "Bank");
+
+            txBuilder.addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+
+            //judge change
+            if(change.doubleValue() > 0){
+                DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), new BigDecimal(change.get()), original_address);
+                txBuilder.addOutputState(changeState);
+            }
+
+            signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
+
+            FlowSession receiverSession = initiateFlow(issuer);
             //call built in sub flow CreateEvolvableTokens. This can be called via rpc or in unit testing
             return subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(receiverSession)));
+        }
+
+
+
+        @NotNull
+        private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap(Party issuer, AtomicDouble change, int pagesize) throws FlowException {
+            AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<>(new BigDecimal(0));
+
+            AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
+
+            int pageSize = pagesize;
+            int pageNumber = 1;
+            long totalStatesAvailable;
+            HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
+
+            LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
+            do {
+//                    System.out.println("Querying" + pageNumber);
+                PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
+                Vault.Page<DigitalShellTokenState> results =
+                        getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class, pageSpec);
+                totalStatesAvailable = results.getTotalStatesAvailable();
+                List<StateAndRef<DigitalShellTokenState>> states = results.getStates();
+                List<StateAndRef<DigitalShellTokenState>> tokenStateAndRefs = states.stream().filter(tokenStateStateAndRef -> {
+                    //Filter according to issuer and address
+                    if (tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)) {
+
+                        if (totalTokenAvailable.get().doubleValue() < amount.doubleValue()) {
+                            if (map.get(tokenStateStateAndRef.getState().getNotary()) != null) {
+                                ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+                                stateAndRefs.add(tokenStateStateAndRef);
+                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+                            } else {
+                                ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = new ArrayList<>();
+                                stateAndRefs.add(tokenStateStateAndRef);
+                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+
+                            }
+                            double v = totalTokenAvailable.get().doubleValue();
+                            //Calculate total tokens available
+                            totalTokenAvailable.set(tokenStateStateAndRef.getState().getData().getAmount().add(BigDecimal.valueOf(v)));
+                        }
+
+                        // Determine the change needed to be returned
+                        if (change.get() == 0 && totalTokenAvailable.get().doubleValue() >= amount.doubleValue()) {
+                            change.set(totalTokenAvailable.get().doubleValue() - amount.doubleValue());
+                            getEnoughMoney.set(true);
+                        }
+                        //keep Address to use
+
+                        return true;
+                    }
+                    return false;
+                }).collect(Collectors.toList());
+                pageNumber++;
+            } while (( pageSize * ( pageNumber - 1 ) <= totalStatesAvailable ) && !getEnoughMoney.get());
+
+
+            // Validate if there is sufficient tokens to spend
+            if(totalTokenAvailable.get().doubleValue() < amount.doubleValue()){
+                throw new FlowException("Insufficient balance");
+            }
+
+
+            return map;
+        }
+
+        @NotNull
+        private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map) throws FlowException {
+            TransactionBuilder txBuilder = new TransactionBuilder();
+
+            //judge num of notary and add inputState
+            if(map.keySet().size() == 1){
+                for(Party notary: map.keySet()){
+                    for(StateAndRef stateAndRef:map.get(notary)) {
+                        txBuilder.addInputState(stateAndRef);
+                    }
+                }
+            }else {
+                //get the max transaction list
+                int size = -1;
+                Party hotNotary = null;
+                for(Party notary: map.keySet()){
+                    int sizeTemp = map.get(notary).size();
+                    if (sizeTemp > size){
+                        size = sizeTemp;
+                        hotNotary = notary;
+                    }
+                }
+                //notary change
+                for(Party notary: map.keySet()){
+                    if(notary == hotNotary){
+                        for (StateAndRef stateAndRef:map.get(notary)) {
+                            txBuilder.addInputState(stateAndRef);
+                        }
+                    }else{
+                        for (StateAndRef stateAndRef:map.get(notary)){
+                            StateAndRef newStateAndRef = (StateAndRef) subFlow(new NotaryChangeFlow(stateAndRef, hotNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
+                            txBuilder.addInputState(newStateAndRef);
+                        }
+                    }
+                }
+            }
+            return txBuilder;
         }
     }
 

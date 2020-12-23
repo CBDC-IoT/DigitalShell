@@ -20,32 +20,27 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-public class DigitalShellTokenTransfer {
+public class DigitalShellMerger {
 
         @InitiatingFlow
         @StartableByRPC
-        public static class Initiator extends FlowLogic<String> {
+        public static class MergeDigitalShellFlow extends FlowLogic<String> {
             private final String issuerString;
-            private final BigDecimal amount;
-            private final String receiverString;
-            private final String address;
             private final String original_address;
 
-            public Initiator(String issuer, String amount, String receiver, String originalAddress, String address) {
+            public MergeDigitalShellFlow(String issuer,  String originalAddress) {
                 this.issuerString  = issuer;
-                this.amount = new BigDecimal(amount);
-                this.receiverString = receiver;
-                this.address = address;
                 this.original_address = originalAddress;
             }
 
             @Override
             @Suspendable
             public String call() throws FlowException {
+
                 MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
                 time_manager.start();
 
@@ -53,13 +48,13 @@ public class DigitalShellTokenTransfer {
 
                 Party issuer = getParty(identityService, issuerString);
 
-                Party receiver=getParty(identityService, receiverString);
-
-                AtomicReference<BigDecimal> change = new AtomicReference<BigDecimal>(new BigDecimal(0));
+                AtomicInteger change = new AtomicInteger(0);
 
                 time_manager.cut("2");
 
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(issuer, change, 300);
+                AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
+
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(totalTokenAvailable, issuer, change, 300);
 
                 /*
                 * How to choose Notary here
@@ -72,14 +67,9 @@ public class DigitalShellTokenTransfer {
                 TransactionBuilder txBuilder = getTransactionBuilder(map);
 
                 //output
-                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
+                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, getOurIdentity(), totalTokenAvailable.get(), original_address);
 
                 txBuilder.addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
-
-                if(change.get().compareTo(BigDecimal.ZERO) == 1){//>0
-                    DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), change.get(), original_address);
-                    txBuilder.addOutputState(changeState);
-                }
 
                 signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
@@ -87,26 +77,15 @@ public class DigitalShellTokenTransfer {
 
                 // Updated Token State to be send to issuer and receiver
                 FlowSession issuerSession = initiateFlow(issuer);
-                FlowSession receiverSession = initiateFlow(receiver);
 
 
-                if(receiver.equals(getOurIdentity())){
-                    subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession)));
-                    time_manager.cut("9");
-                    System.out.println(time_manager.result());
-                    time_manager.result();
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan1");
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
+                subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession)));
+                time_manager.cut("9");
+                System.out.println(time_manager.result());
+                time_manager.result();
+                LoggerFactory.getLogger(DigitalShellMerger.class).info("SiYuan1");
+                LoggerFactory.getLogger(DigitalShellMerger.class).info(time_manager.result());
 
-                }else {
-//                    FinalityFlow finalityFlow = new FinalityFlow(signedTransaction,ImmutableList.of(issuerSession, receiverSession));
-                    subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession, receiverSession)));
-                    time_manager.cut("9");
-                    System.out.println(time_manager.result());
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan2");
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
-
-            }
                 return "Success";
             }
 
@@ -115,21 +94,16 @@ public class DigitalShellTokenTransfer {
                 return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
             }
 
-
-
             /*find all needed State*/
             @NotNull
-            private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, int pagesize) throws FlowException {
-                AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
-
-                AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
+            private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap( AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, AtomicInteger change, int pagesize) throws FlowException {
 
                 int pageSize = pagesize;
                 int pageNumber = 1;
                 long totalStatesAvailable;
                 HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
 
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
+                LoggerFactory.getLogger(DigitalShellMerger.class).info("SiYuan0");
                 do {
 //                    System.out.println("Querying" + pageNumber);
                     PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
@@ -141,7 +115,6 @@ public class DigitalShellTokenTransfer {
                             //Filter according to issuer and address
                             if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
 
-                                if(totalTokenAvailable.get().compareTo(amount)== -1) {// <
                                     if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
                                         ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
                                         stateAndRefs.add(tokenStateStateAndRef);
@@ -151,31 +124,14 @@ public class DigitalShellTokenTransfer {
                                         stateAndRefs.add(tokenStateStateAndRef);
                                         map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                                     }
-
-                                    //Calculate total tokens available
-                                    totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
-                                }
-
-                                // Determine the change needed to be returned
-                                if(change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount)!= -1 ){//>=
-                                    change.set(totalTokenAvailable.get().subtract( amount) );
-                                    getEnoughMoney.set(true);
-                                    System.out.println(change.get().toString());
-                                }
-                                //keep Address to use
-
+                                totalTokenAvailable.set(totalTokenAvailable.get().add(tokenStateStateAndRef.getState().getData().getAmount()));
                                 return true;
                             }
                             return false;
                         }).collect(Collectors.toList());
                     pageNumber++;
-                }while ((pageSize * (pageNumber - 1) <= totalStatesAvailable) && !getEnoughMoney.get());
+                }while ((pageSize * (pageNumber - 1) <= totalStatesAvailable));
 
-                System.out.println(totalStatesAvailable);
-                // Validate if there is sufficient tokens to spend
-                if(totalTokenAvailable.get().compareTo(amount)==-1){//<
-                    throw new FlowException("Insufficient balance");
-                }
                 return map;
             }
 
@@ -183,10 +139,6 @@ public class DigitalShellTokenTransfer {
             @NotNull
             private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map) throws FlowException {
                 TransactionBuilder txBuilder = new TransactionBuilder();
-
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(String.valueOf(map.size()));
 
                 //judge num of notary and add inputState
                 if(map.keySet().size() == 1){
@@ -228,9 +180,7 @@ public class DigitalShellTokenTransfer {
 
 
 
-
-
-        @InitiatedBy(Initiator.class)
+        @InitiatedBy(MergeDigitalShellFlow.class)
         public static class Responder extends FlowLogic<SignedTransaction>{
 
             private FlowSession otherPartySession;

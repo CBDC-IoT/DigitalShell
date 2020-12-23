@@ -8,15 +8,16 @@ import net.corda.core.identity.Party;
 import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 @BelongsToContract(TokenContract.class)
 public class DigitalShellTokenState implements ContractState {
     private Party issuer;
     private Party owner;
-    private int amount;
+    private BigDecimal amount;
     private String address;
 
-    public DigitalShellTokenState(Party issuer, Party owner, int amount, String address) {
+    public DigitalShellTokenState(Party issuer, Party owner, BigDecimal amount, String address) {
         this.issuer = issuer;
         this.owner = owner;
         this.amount = amount;
@@ -37,7 +38,7 @@ public class DigitalShellTokenState implements ContractState {
         return owner;
     }
 
-    public int getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 

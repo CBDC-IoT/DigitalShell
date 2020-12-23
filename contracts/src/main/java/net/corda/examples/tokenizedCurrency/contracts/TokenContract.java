@@ -2,11 +2,14 @@ package net.corda.examples.tokenizedCurrency.contracts;
 
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
+import net.corda.core.contracts.ContractState;
+import net.corda.core.contracts.TransactionState;
 import net.corda.core.transactions.LedgerTransaction;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TokenContract implements Contract {
     public static String ID = "bootcamp.TokenContract";
@@ -37,7 +40,7 @@ public class TokenContract implements Contract {
             throw new IllegalArgumentException("Output of type TokenState Expected");
 
         DigitalShellTokenState tokenState = (DigitalShellTokenState)tx.getOutput(0);
-        if(tokenState.getAmount() < 1)
+        if(tokenState.getAmount().doubleValue() < 0)
             throw new IllegalArgumentException("Positive amount expected");
 
         if(!(tx.getCommand(0).getSigners()
@@ -59,18 +62,24 @@ public class TokenContract implements Contract {
             throw new IllegalArgumentException("Output count must either be one or two");
 
         // Input amount must be equal to output amount
-        AtomicInteger inputSum = new AtomicInteger();
+        AtomicReference<BigDecimal> inputSum = new AtomicReference<BigDecimal>(new BigDecimal(0));
+
         tx.getInputs().forEach(contractStateStateAndRef -> {
-            DigitalShellTokenState inputState = (DigitalShellTokenState)contractStateStateAndRef.getState().getData();
-            inputSum.set(inputSum.get() + inputState.getAmount());
+            TransactionState<ContractState> transactionState = contractStateStateAndRef.getState();
+            ContractState data = transactionState.getData();
+            DigitalShellTokenState inputState = (DigitalShellTokenState)data;
+            BigDecimal amount = inputState.getAmount();
+            BigDecimal tempSum = inputSum.get();
+            BigDecimal add = amount.add(tempSum);
+            inputSum.set(add);
         });
 
-        AtomicInteger outputSum = new AtomicInteger();
+        AtomicReference<BigDecimal> outputSum = new AtomicReference<BigDecimal>(new BigDecimal(0));
         tx.getOutputs().forEach(contractStateTransactionState -> {
-            outputSum.set(outputSum.get() + ((DigitalShellTokenState)contractStateTransactionState.getData()).getAmount());
+            outputSum.set(outputSum.get().add(((DigitalShellTokenState)contractStateTransactionState.getData()).getAmount()));
         });
 
-        if(inputSum.get() != outputSum.get())
+        if(inputSum.get().compareTo(outputSum.get())!=0)
             throw new IllegalArgumentException("Incorrect Spending");
 
         // Owner must sign
