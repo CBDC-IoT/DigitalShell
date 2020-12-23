@@ -1,7 +1,7 @@
 package net.corda.examples.tokenizedCurrency;
 
+import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import com.google.common.collect.ImmutableList;
-import net.corda.DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.After;

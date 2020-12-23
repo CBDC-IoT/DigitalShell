@@ -9,7 +9,7 @@ import net.corda.core.messaging.FlowHandle;
 import net.corda.core.node.NodeInfo;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.utilities.NetworkHostAndPort;
-import net.corda.DigitalShell.flows.DigitalShellTokenCreateAndIssue;
+import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

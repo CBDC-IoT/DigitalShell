@@ -1,16 +1,11 @@
-package net.corda.DigitalShell.flows;
+package DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.contracts.StateAndRef;
-import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
-import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.utilities.ProgressTracker;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
-
-import java.util.Collections;
 
 @InitiatingFlow
 @StartableByRPC

@@ -1,4 +1,4 @@
-package net.corda.DigitalShell.flows;
+package DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 public class DigitalShellTokenTransfer {
 
         @InitiatingFlow
