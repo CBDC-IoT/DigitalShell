@@ -4,7 +4,6 @@ import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.core.node.services.Vault;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import util.MACRO_TIME_MANG;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,10 +48,9 @@ public class DigitalShellTokenTransfer {
                 IdentityService identityService = getServiceHub().getIdentityService();
                 Party issuer=identityService.partiesFromName(issuerString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
                 Party receiver=identityService.partiesFromName(receiverString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+receiverString+"party not found"));
-
-                final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary2,L=Guangzhou,C=CN")); // METHOD 2
-                final Party originalNotary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
-                time_manager.cut("1");
+//                final Party notary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary2,L=Guangzhou,C=CN")); // METHOD 2
+//                final Party originalNotary = getServiceHub().getNetworkMapCache().getNotary(CordaX500Name.parse("O=Notary1,L=Guangzhou,C=CN")); // METHOD 2
+//                time_manager.cut("1");
 //                List<StateAndRef<DigitalShellTokenState>> allTokenStateAndRefs =
 //                        getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class).getStates();
 
@@ -62,9 +61,12 @@ public class DigitalShellTokenTransfer {
                 time_manager.cut("2");
 
                 AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
-                int pageSize=5;
+                int pageSize=400;
                 int pageNumber=1;
                 long totalStatesAvailable;
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
+
+                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
                 do {
 //                    System.out.println("Querying" + pageNumber);
                     PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
@@ -86,7 +88,16 @@ public class DigitalShellTokenTransfer {
 //                                }
 
                                 if(totalTokenAvailable.get() < amount) {
-                                    inputStateAndRef.add(tokenStateStateAndRef);
+                                    if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
+                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+                                        stateAndRefs.add(tokenStateStateAndRef);
+                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+                                    }else{
+                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = new ArrayList<>();
+                                        stateAndRefs.add(tokenStateStateAndRef);
+                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+
+                                    }
 
                                     //Calculate total tokens available
                                     totalTokenAvailable.set(totalTokenAvailable.get() + tokenStateStateAndRef.getState().getData().getAmount());
@@ -114,38 +125,81 @@ public class DigitalShellTokenTransfer {
                     throw new FlowException("Insufficient balance");
                 }
 //                time_manager.cut("4");
-                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
+//                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
 
 //                time_manager.cut("5");
-
 
                 /*
                 * How to choose Notary here
                 * */
 
-
                 /*
                  * How to choose Notary here
                  * */
 
-                TransactionBuilder txBuilder = new TransactionBuilder(notary).addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+                time_manager.cut("4");
 
-                inputStateAndRef.forEach(txBuilder::addInputState);
+//To-do Notary Change
+                SignedTransaction signedTransaction = null;
+                TransactionBuilder txBuilder = new TransactionBuilder();
 
+                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
+                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
+                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(String.valueOf(map.size()));
+                //judge num of notary and add inputState
+                if(map.keySet().size() == 1){
+                    for(Party notary: map.keySet()){
+                        for(StateAndRef stateAndRef:map.get(notary)) {
+                                txBuilder.addInputState(stateAndRef);
+                            }
+                    }
+
+
+                }else {
+                    //get the max transaction list
+                    int size = -1;
+                    Party hotNotary = null;
+                    for(Party notary: map.keySet()){
+                        int sizeTemp = map.get(notary).size();
+                        if (sizeTemp > size){
+                            size = sizeTemp;
+                            hotNotary = notary;
+                        }
+                    }
+                    //notary change
+                    for(Party notary: map.keySet()){
+                        if(notary == hotNotary){
+                            for (StateAndRef stateAndRef:map.get(notary)) {
+                                txBuilder.addInputState(stateAndRef);
+                            }
+                        }else{
+                            for (StateAndRef stateAndRef:map.get(notary)){
+                                StateAndRef newStateAndRef = (StateAndRef) subFlow(new NotaryChangeFlow(stateAndRef, hotNotary,AbstractStateReplacementFlow.Instigator.Companion.tracker()));
+                                txBuilder.addInputState(newStateAndRef);
+                            }
+                        }
+                    }
+                }
+
+
+                //output
+                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
+
+                txBuilder.addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+
+                //judge cahnge
                 if(change.get() > 0){
                     DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), change.get(), original_address);
                     txBuilder.addOutputState(changeState);
                 }
+                signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
                 txBuilder.verify(getServiceHub());
                 time_manager.cut("7");
-                SignedTransaction signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
-
                 // Updated Token State to be send to issuer and receiver
                 FlowSession issuerSession = initiateFlow(issuer);
                 FlowSession receiverSession = initiateFlow(receiver);
                 time_manager.cut("8");
-
 
                 if(receiver.equals(getOurIdentity())){
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession)));
@@ -153,8 +207,7 @@ public class DigitalShellTokenTransfer {
                     time_manager.result();
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan1");
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
-//                    subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession)))
-                    return "Success";
+
                 }else {
 //                    FinalityFlow finalityFlow = new FinalityFlow(signedTransaction,ImmutableList.of(issuerSession, receiverSession));
                     time_manager.cut("9");
@@ -163,9 +216,10 @@ public class DigitalShellTokenTransfer {
                     System.out.println(time_manager.result());
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan2");
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
-//                    subFlow(finalityFlow);
-                    return "Success";
-            }}
+
+            }
+                return "Success";
+            }
         }
 
         @InitiatedBy(Initiator.class)

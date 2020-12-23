@@ -52,10 +52,11 @@ public class Controller {
     @GetMapping(value =  "/createToken" , produces =  TEXT_PLAIN_VALUE )
     public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") int amount,
                                                           @RequestParam(value = "receiver") String receiver,
-                                                          @RequestParam(value = "address") String address){
+                                                          @RequestParam(value = "address") String address,
+                                                          @RequestParam(value = "notary") int notary){
 
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address).getReturnValue().get();
+            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notary).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to .");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

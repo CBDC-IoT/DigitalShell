@@ -17,12 +17,14 @@ public class DigitalShellTokenCreateAndIssue {
         private int amount;
         private String address;
         private String receiverString;
+        private int notaryInt;
         // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
-        public CreateDigitalShellTokenFlow(int amount, String receiver, String address) {
+        public CreateDigitalShellTokenFlow(int amount, String receiver, String address, int notary) {
         this.amount = amount;
         this.address = address;
         this.receiverString = receiver;
+        this.notaryInt = notary;
         }
 
         @Override
@@ -41,8 +43,11 @@ public class DigitalShellTokenCreateAndIssue {
 
             //wrap it with transaction state specifying the notary
 //            TransactionState<DigitalShellTokenState> transactionState = new TransactionState<>(digitalShellTokenState, notary);
+
+
+
             TransactionBuilder txBuilder = new TransactionBuilder(getServiceHub().getNetworkMapCache()
-                    .getNotaryIdentities().get(0))
+                    .getNotaryIdentities().get(notaryInt))
                     .addOutputState(digitalShellTokenState)
                     .addCommand(new TokenContract.Commands.Issue(), ImmutableList.of(getOurIdentity().getOwningKey()));
 

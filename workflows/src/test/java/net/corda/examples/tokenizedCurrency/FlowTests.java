@@ -1,6 +1,7 @@
 package net.corda.examples.tokenizedCurrency;
 
 import com.google.common.collect.ImmutableList;
+import net.corda.DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.After;
@@ -24,7 +25,6 @@ public class FlowTests {
 
     @Test
     public void dummyTest() {
-
-
+        a.startFlow(new DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow(1000, "CustomerA", "ABC", 0));
     }
 }
