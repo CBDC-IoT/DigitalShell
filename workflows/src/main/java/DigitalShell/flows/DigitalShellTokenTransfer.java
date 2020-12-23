@@ -56,12 +56,16 @@ public class DigitalShellTokenTransfer {
 //                        getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class).getStates();
 
                 AtomicInteger totalTokenAvailable = new AtomicInteger();
+
+
                 List<StateAndRef<DigitalShellTokenState>> inputStateAndRef = new ArrayList<>();
                 AtomicInteger change = new AtomicInteger(0);
 
                 time_manager.cut("2");
 
                 AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
+
+
                 int pageSize=400;
                 int pageNumber=1;
                 long totalStatesAvailable;
@@ -78,15 +82,6 @@ public class DigitalShellTokenTransfer {
                     List<StateAndRef<DigitalShellTokenState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
                             //Filter according to issuer and address
                             if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
-
-                                //Filter inputStates for spending
-//                                try {
-//                                    System.out.println(originalNotary);
-//                                    System.out.println(notary);
-//                                    subFlow(new SwitchNotaryFlow(tokenStateStateAndRef,notary));
-//                                } catch (FlowException e) {
-//                                    e.printStackTrace();
-//                                }
 
                                 if(totalTokenAvailable.get() < amount) {
                                     if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
@@ -125,28 +120,24 @@ public class DigitalShellTokenTransfer {
                 if(totalTokenAvailable.get() < amount){
                     throw new FlowException("Insufficient balance");
                 }
-//                time_manager.cut("4");
-//                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
-
-//                time_manager.cut("5");
 
                 /*
                 * How to choose Notary here
                 * */
 
-                /*
-                 * How to choose Notary here
-                 * */
 
                 time_manager.cut("4");
 
-//To-do Notary Change
+
                 SignedTransaction signedTransaction = null;
+
+
                 TransactionBuilder txBuilder = new TransactionBuilder();
 
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(String.valueOf(map.size()));
+
                 //judge num of notary and add inputState
                 if(map.keySet().size() == 1){
                     for(Party notary: map.keySet()){
@@ -154,7 +145,6 @@ public class DigitalShellTokenTransfer {
                                 txBuilder.addInputState(stateAndRef);
                             }
                     }
-
 
                 }else {
                     //get the max transaction list
@@ -193,6 +183,8 @@ public class DigitalShellTokenTransfer {
                     DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), change.get(), original_address);
                     txBuilder.addOutputState(changeState);
                 }
+
+
                 signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
                 txBuilder.verify(getServiceHub());

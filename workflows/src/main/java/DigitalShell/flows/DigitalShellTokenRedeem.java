@@ -40,10 +40,8 @@ public class DigitalShellTokenRedeem {
 
             //wrap it with transaction state specifying the notary
 //            TransactionState<DigitalShellTokenState> transactionState = new TransactionState<>(digitalShellTokenState, notary);
-            TransactionBuilder txBuilder = new TransactionBuilder(getServiceHub().getNetworkMapCache()
-                    .getNotaryIdentities().get(0))
-                    .addOutputState(digitalShellTokenState)
-                    .addCommand(new TokenContract.Commands.Redeem(), ImmutableList.of(getOurIdentity().getOwningKey()));
+            TransactionBuilder txBuilder = new TransactionBuilder();
+            txBuilder.addOutputState(digitalShellTokenState).addCommand(new TokenContract.Commands.Redeem(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
             txBuilder.verify(getServiceHub());
 
