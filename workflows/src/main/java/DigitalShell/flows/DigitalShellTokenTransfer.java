@@ -181,25 +181,25 @@ public class DigitalShellTokenTransfer {
 
             /*put state into transactionbuilder*/
             @NotNull
+            @Suspendable
             private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map) throws FlowException {
-                TransactionBuilder txBuilder = new TransactionBuilder();
+
 
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(String.valueOf(map.size()));
 
                 //judge num of notary and add inputState
+                Party hotNotary = null;
                 if(map.keySet().size() == 1){
                     for(Party notary: map.keySet()){
-                        for(StateAndRef stateAndRef:map.get(notary)) {
-                                txBuilder.addInputState(stateAndRef);
-                            }
+                        hotNotary = notary;
+
                     }
 
                 }else {
                     //get the max transaction list
                     int size = -1;
-                    Party hotNotary = null;
                     for(Party notary: map.keySet()){
                         int sizeTemp = map.get(notary).size();
                         if (sizeTemp > size){
@@ -207,17 +207,19 @@ public class DigitalShellTokenTransfer {
                             hotNotary = notary;
                         }
                     }
-                    //notary change
-                    for(Party notary: map.keySet()){
-                        if(notary == hotNotary){
-                            for (StateAndRef stateAndRef:map.get(notary)) {
-                                txBuilder.addInputState(stateAndRef);
-                            }
-                        }else{
-                            for (StateAndRef stateAndRef:map.get(notary)){
-                                StateAndRef newStateAndRef = (StateAndRef) subFlow(new NotaryChangeFlow(stateAndRef, hotNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
-                                txBuilder.addInputState(newStateAndRef);
-                            }
+                }
+                TransactionBuilder txBuilder = new TransactionBuilder(hotNotary);
+
+                //notary change
+                for(Party notary: map.keySet()){
+                    if(notary == hotNotary){
+                        for (StateAndRef stateAndRef:map.get(notary)) {
+                            txBuilder.addInputState(stateAndRef);
+                        }
+                    }else{
+                        for (StateAndRef stateAndRef:map.get(notary)){
+                            StateAndRef newStateAndRef = (StateAndRef) subFlow(new NotaryChangeFlow(stateAndRef, hotNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
+                            txBuilder.addInputState(newStateAndRef);
                         }
                     }
                 }

@@ -38,7 +38,7 @@ public class Controller {
 
     @GetMapping(value =  "/moveToken" , produces =  TEXT_PLAIN_VALUE )
     public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                              @RequestParam(value = "amount") int amount,
+                                              @RequestParam(value = "amount") String amount,
                                               @RequestParam(value = "receiver") String receiver,
                                                         @RequestParam(value = "originalAddress") String originalAddress,
                                                         @RequestParam(value = "address") String address) {
@@ -53,7 +53,7 @@ public class Controller {
 
 
     @GetMapping(value =  "/createToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") int amount,
+    public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") String amount,
                                                           @RequestParam(value = "receiver") String receiver,
                                                           @RequestParam(value = "address") String address,
                                                           @RequestParam(value = "notary") int notary){
