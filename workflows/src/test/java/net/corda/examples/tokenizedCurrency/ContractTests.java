@@ -6,5 +6,6 @@ public class ContractTests {
 
     @Test
     public void dummyTest() {
+
     }
 }

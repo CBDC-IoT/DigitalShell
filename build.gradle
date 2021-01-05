@@ -37,12 +37,12 @@ buildscript {
         classpath "net.corda.plugins:cordformation:$corda_gradle_plugins_version"
         classpath "net.corda.plugins:quasar-utils:$corda_gradle_plugins_version"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_gradle_plugin_version"
+
     }
 }
 
 allprojects {
     apply plugin: 'java'
-
     repositories {
         mavenLocal()
         jcenter()
@@ -150,16 +150,16 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapps = []
     }
 
-    node {
-        name "O=Notary3,L=Guangzhou,C=CN"
-        notary = [validating : false]
-        p2pPort 10020
-        rpcSettings {
-            address("localhost:10021")
-            adminAddress("localhost:10022")
-        }
-        cordapps = []
-    }
+//    node {
+//        name "O=Notary3,L=Guangzhou,C=CN"
+//        notary = [validating : false]
+//        p2pPort 10020
+//        rpcSettings {
+//            address("localhost:10021")
+//            adminAddress("localhost:10022")
+//        }
+//        cordapps = []
+//    }
 
     node {
         name "O=Bank,L=Guangzhou,C=CN"
@@ -194,16 +194,6 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcSettings {
             address("localhost:10013")
             adminAddress("localhost:10014")
-        }
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-    }
-
-    node {
-        name "O=CustomerB,L=Guangzhou,C=CN"
-        p2pPort 10023
-        rpcSettings {
-            address("localhost:10024")
-            adminAddress("localhost:10025")
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }

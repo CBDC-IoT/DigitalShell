@@ -7,8 +7,8 @@ import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
-import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
-import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
+import net.corda.examples.tokenizedCurrency.contracts.QueryableTokenContract;
+import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 
 import java.math.BigDecimal;
 
@@ -32,7 +32,7 @@ public class DigitalShellTokenCreateAndIssue {
         @Override
         @Suspendable
         public SignedTransaction call() throws FlowException {
-            // Obtain a reference to a notary we wish to use.
+            // Obtain a reference to a notaryDigitalShellQueryableState we wish to use.
             /** METHOD 1: Take first notary on network, WARNING: use for test, non-prod environments, and single-notary networks only!*
              *  METHOD 2: Explicit selection of notary by CordaX500Name - argument can by coded in flow or parsed from config (Preferred)
              *
@@ -41,7 +41,7 @@ public class DigitalShellTokenCreateAndIssue {
 //            final Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0); // METHOD 1
             IdentityService identityService = getServiceHub().getIdentityService();
             Party owner=identityService.partiesFromName(receiverString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+receiverString+"party not found"));
-            DigitalShellTokenState digitalShellTokenState = new DigitalShellTokenState( getOurIdentity(),owner, amount, address);
+            DigitalShellQueryableState digitalShellTokenState = new DigitalShellQueryableState( getOurIdentity(),owner, amount, address);
 
             //wrap it with transaction state specifying the notary
 //            TransactionState<DigitalShellTokenState> transactionState = new TransactionState<>(digitalShellTokenState, notary);
@@ -51,7 +51,7 @@ public class DigitalShellTokenCreateAndIssue {
             TransactionBuilder txBuilder = new TransactionBuilder(getServiceHub().getNetworkMapCache()
                     .getNotaryIdentities().get(notaryInt))
                     .addOutputState(digitalShellTokenState)
-                    .addCommand(new TokenContract.Commands.Issue(), ImmutableList.of(getOurIdentity().getOwningKey()));
+                    .addCommand(new QueryableTokenContract.Commands.ShellIssue(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
             txBuilder.verify(getServiceHub());
 

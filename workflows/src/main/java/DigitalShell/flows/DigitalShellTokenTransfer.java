@@ -7,11 +7,12 @@ import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.vault.PageSpecification;
+import net.corda.core.node.services.vault.*;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
-import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
-import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
+import net.corda.examples.tokenizedCurrency.contracts.QueryableTokenContract;
+import net.corda.examples.tokenizedCurrency.states.AddressState;
+import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import util.MACRO_TIME_MANG;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
 
 public class DigitalShellTokenTransfer {
 
@@ -59,7 +62,12 @@ public class DigitalShellTokenTransfer {
 
                 time_manager.cut("2");
 
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(issuer, change, 300);
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = null;
+                try {
+                    map = getPartyArrayListHashMap(issuer, change, 300);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
 
                 /*
                 * How to choose Notary here
@@ -72,12 +80,12 @@ public class DigitalShellTokenTransfer {
                 TransactionBuilder txBuilder = getTransactionBuilder(map);
 
                 //output
-                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, receiver, amount, address);
+                DigitalShellQueryableState outputState = new DigitalShellQueryableState( issuer, receiver, amount, address);
 
-                txBuilder.addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+                txBuilder.addOutputState(outputState).addCommand(new QueryableTokenContract.Commands.ShellTransfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
                 if(change.get().compareTo(BigDecimal.ZERO) == 1){//>0
-                    DigitalShellTokenState changeState = new DigitalShellTokenState(issuer, getOurIdentity(), change.get(), original_address);
+                    DigitalShellQueryableState changeState = new DigitalShellQueryableState(issuer, getOurIdentity(), change.get(), original_address);
                     txBuilder.addOutputState(changeState);
                 }
 
@@ -119,70 +127,161 @@ public class DigitalShellTokenTransfer {
 
             /*find all needed State*/
             @NotNull
-            private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, int pagesize) throws FlowException {
+            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, int pagesize) throws FlowException, NoSuchFieldException {
                 AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
                 AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
 
-                int pageSize = pagesize;
-                int pageNumber = 1;
-                long totalStatesAvailable;
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
+                QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED);
 
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
-                do {
-//                    System.out.println("Querying" + pageNumber);
-                    PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
-                    Vault.Page<DigitalShellTokenState> results =
-                            getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class, pageSpec);
-                    totalStatesAvailable = results.getTotalStatesAvailable();
-                    List<StateAndRef<DigitalShellTokenState>> states = results.getStates();
-                    List<StateAndRef<DigitalShellTokenState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
-                            //Filter according to issuer and address
-                            if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
+                FieldInfo attributeAddress = getField("address", AddressState.class);
 
-                                if(totalTokenAvailable.get().compareTo(amount)== -1) {// <
-                                    if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
-                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
-                                        stateAndRefs.add(tokenStateStateAndRef);
-                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                                    }else{
-                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = new ArrayList<>();
-                                        stateAndRefs.add(tokenStateStateAndRef);
-                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                                    }
+                CriteriaExpression addressIndex = Builder.equal(attributeAddress, original_address.trim());
 
-                                    //Calculate total tokens available
-                                    totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
-                                }
+                QueryCriteria customCriteria = new QueryCriteria.VaultCustomQueryCriteria(addressIndex);
 
-                                // Determine the change needed to be returned
-                                if(change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount)!= -1 ){//>=
-                                    change.set(totalTokenAvailable.get().subtract( amount) );
-                                    getEnoughMoney.set(true);
-                                    System.out.println(change.get().toString());
-                                }
-                                //keep Address to use
+                QueryCriteria criteria = generalCriteria.and(customCriteria);
 
-                                return true;
+
+                PageSpecification pageSpec = new PageSpecification(1, 50);
+
+                Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
+
+
+                long totalStatesAvailable1 = digitalShellQueryableStatePage.getTotalStatesAvailable();
+
+                System.out.println("TotalAvailable" + totalStatesAvailable1);
+
+//                Vault.Page<DigitalShellQueryableState> generalResult = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, generalCriteria, pageSpec);
+//
+//                System.out.println("generalResult" + generalResult.getTotalStatesAvailable());
+//
+//
+//                Vault.Page<DigitalShellQueryableState> result = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, pageSpec);
+//                System.out.println("generalResult" + result.getTotalStatesAvailable());
+//
+//                Vault.Page<DigitalShellQueryableState> customresult = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, customCriteria, pageSpec);
+//                System.out.println("customresult" + customresult.getTotalStatesAvailable());
+//
+//
+//                Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage1 = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, pageSpec);
+//                System.out.println("aaaa" + digitalShellQueryableStatePage1.getTotalStatesAvailable());
+//                System.out.println("aaaa" + digitalShellQueryableStatePage1.getStates().size());
+
+
+//                String nativeQuery = "SELECT v.transaction_id, v.output_index FROM DIGITAL_SHELL v WHERE v.address =' " + original_address + "'";
+//
+//                Connection connection = getServiceHub().jdbcSession();
+//
+//                try {
+//                    ResultSet resultSet = connection.prepareStatement(nativeQuery).executeQuery();
+//                    System.out.println("resultSet" + resultSet.getFetchSize());
+//
+//
+//                    String string = resultSet.getString(1);
+//                    System.out.println("TxId:" + string);
+//
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = new HashMap<>();
+
+
+                List<StateAndRef<DigitalShellQueryableState>> states = digitalShellQueryableStatePage.getStates();
+                List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
+                    //Filter according to issuer and address
+                    if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer)){
+
+                        if(totalTokenAvailable.get().compareTo(amount)== -1) {// <
+                            if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
+                                ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+                                stateAndRefs.add(tokenStateStateAndRef);
+                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+                            }else{
+                                ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = new ArrayList<>();
+                                stateAndRefs.add(tokenStateStateAndRef);
+                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                             }
-                            return false;
-                        }).collect(Collectors.toList());
-                    pageNumber++;
-                }while ((pageSize * (pageNumber - 1) <= totalStatesAvailable) && !getEnoughMoney.get());
 
-                System.out.println(totalStatesAvailable);
-                // Validate if there is sufficient tokens to spend
+                            //Calculate total tokens available
+                            totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
+                        }
+
+                        // Determine the change needed to be returned
+                        if(change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount)!= -1 ){//>=
+                            change.set(totalTokenAvailable.get().subtract( amount) );
+                            getEnoughMoney.set(true);
+                            System.out.println(change.get().toString());
+                        }
+                        //keep Address to use
+
+                        return true;
+                    }
+                    return false;
+                }).collect(Collectors.toList());
+
                 if(totalTokenAvailable.get().compareTo(amount)==-1){//<
                     throw new FlowException("Insufficient balance");
                 }
+//                int pageSize = pagesize;
+//                int pageNumber = 1;
+//                long totalStatesAvailable;
+//                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
+//                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
+//                do {
+////                    System.out.println("Querying" + pageNumber);
+////                    PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
+//                    Vault.Page<DigitalShellTokenState> results =
+//                            getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class, pageSpec);
+//                    totalStatesAvailable = results.getTotalStatesAvailable();
+//                    List<StateAndRef<DigitalShellTokenState>> states = results.getStates();
+//                    List<StateAndRef<DigitalShellTokenState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
+//                            //Filter according to issuer and address
+//                            if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
+//
+//                                if(totalTokenAvailable.get().compareTo(amount)== -1) {// <
+//                                    if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
+//                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+//                                        stateAndRefs.add(tokenStateStateAndRef);
+//                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+//                                    }else{
+//                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = new ArrayList<>();
+//                                        stateAndRefs.add(tokenStateStateAndRef);
+//                                        map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+//                                    }
+//
+//                                    //Calculate total tokens available
+//                                    totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
+//                                }
+//
+//                                // Determine the change needed to be returned
+//                                if(change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount)!= -1 ){//>=
+//                                    change.set(totalTokenAvailable.get().subtract( amount) );
+//                                    getEnoughMoney.set(true);
+//                                    System.out.println(change.get().toString());
+//                                }
+//                                //keep Address to use
+//
+//                                return true;
+//                            }
+//                            return false;
+//                        }).collect(Collectors.toList());
+//                    pageNumber++;
+//                }while ((pageSize * (pageNumber - 1) <= totalStatesAvailable) && !getEnoughMoney.get());
+//
+//                System.out.println(totalStatesAvailable);
+//                // Validate if there is sufficient tokens to spend
+//                if(totalTokenAvailable.get().compareTo(amount)==-1){//<
+//                    throw new FlowException("Insufficient balance");
+//                }
                 return map;
             }
 
             /*put state into transactionbuilder*/
             @NotNull
             @Suspendable
-            private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map) throws FlowException {
+            private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
 
 
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
@@ -208,6 +307,7 @@ public class DigitalShellTokenTransfer {
                         }
                     }
                 }
+
                 TransactionBuilder txBuilder = new TransactionBuilder(hotNotary);
 
                 //notary change
