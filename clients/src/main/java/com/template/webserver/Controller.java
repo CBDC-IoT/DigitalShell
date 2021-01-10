@@ -3,10 +3,7 @@ package com.template.webserver;
 import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import DigitalShell.flows.DigitalShellTokenTransfer;
 import com.template.webserver.Service.VendingMachineService;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +22,13 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 @RequestMapping("/") // The paths for HTTP requests are relative to this base path.
 public class Controller {
     private final CordaRPCOps proxy;
-    private final static Logger logger = LoggerFactory.getLogger(Controller.class);
-    private final CordaX500Name me;
 
     @Autowired
     VendingMachineService vendingMachineService;
 
     public Controller(NodeRPCConnection rpc) {
         this.proxy = rpc.proxy;
-        this.me = proxy.nodeInfo().getLegalIdentities().get(0).getName();
+
     }
 
     @GetMapping(value =  "/moveToken" , produces =  TEXT_PLAIN_VALUE )
@@ -60,7 +55,7 @@ public class Controller {
 
         try {
             proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notary).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to .");
+            return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

@@ -30,7 +30,7 @@ public class DigitalShellQueryableState implements QueryableState {
     @NotNull
     @Override
     public List<AbstractParty> getParticipants() {
-        return ImmutableList.of(issuer, owner);
+        return ImmutableList.of(owner);
     }
 
     public Party getIssuer() {
