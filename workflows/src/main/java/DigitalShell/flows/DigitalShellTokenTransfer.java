@@ -90,6 +90,7 @@ public class DigitalShellTokenTransfer {
                 return "Success";
             }
 
+            @Suspendable
             private TransactionBuilder getTransactionBuilder(MACRO_TIME_MANG time_manager, Party issuer, Party receiver) throws FlowException {
                 AtomicReference<BigDecimal> change = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
@@ -150,7 +151,6 @@ public class DigitalShellTokenTransfer {
 
                 QueryCriteria criteria = generalCriteria.and(customCriteria);
 
-
                 PageSpecification pageSpec = new PageSpecification(1, 50);
 
                 Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
@@ -168,7 +168,7 @@ public class DigitalShellTokenTransfer {
                     //Filter according to issuer and address
                     if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer)){
 
-                        if(totalTokenAvailable.get().compareTo(amount)== -1) {// <
+                        if(totalTokenAvailable.get().compareTo(amount)== -1 || totalTokenAvailable.get().compareTo(amount)== 0) {// totalToeknAvailable < Amount
                             if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
                                 ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
                                 stateAndRefs.add(tokenStateStateAndRef);
@@ -178,7 +178,7 @@ public class DigitalShellTokenTransfer {
                                 stateAndRefs.add(tokenStateStateAndRef);
                                 map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                             }
-
+                            System.out.println(totalTokenAvailable);
                             //Calculate total tokens available
                             totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
                         }
