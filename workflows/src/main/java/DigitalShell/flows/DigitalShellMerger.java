@@ -29,11 +29,11 @@ public class DigitalShellMerger {
         @InitiatingFlow
         @StartableByRPC
         public static class MergeDigitalShellFlow extends FlowLogic<String> {
-            private final String issuerString;
+            private final String partyString;
             private final String original_address;
 
-            public MergeDigitalShellFlow(String issuer,  String originalAddress) {
-                this.issuerString  = issuer;
+            public MergeDigitalShellFlow(String party, String originalAddress) {
+                this.partyString  = party;
                 this.original_address = originalAddress;
             }
 
@@ -46,7 +46,7 @@ public class DigitalShellMerger {
 
                 IdentityService identityService = getServiceHub().getIdentityService();
 
-                Party issuer = getParty(identityService, issuerString);
+                Party issuer = getParty(identityService, partyString);
 
                 AtomicInteger change = new AtomicInteger(0);
 
@@ -91,7 +91,7 @@ public class DigitalShellMerger {
 
             /*get party from name*/
             private Party getParty(IdentityService identityService, String name) {
-                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
+                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ partyString+"party not found"));
             }
 
             /*find all needed State*/

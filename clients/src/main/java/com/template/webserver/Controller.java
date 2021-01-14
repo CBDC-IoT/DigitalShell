@@ -2,15 +2,13 @@ package com.template.webserver;
 
 import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
 import DigitalShell.flows.DigitalShellTokenTransfer;
+import DigitalShell.flows.SwitchNotaryFlow;
 import com.template.webserver.Service.VendingMachineService;
 import net.corda.core.messaging.CordaRPCOps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -72,6 +70,19 @@ public class Controller {
             Integer amount = vendingMachineService.getFoodPrice(foodName);
             proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,"Bank", amount, receiver, originalAddress, address).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(""+ amount + "DigitalShell has been transferred to " + receiver + " with address of " + address +".");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value =  "/notaryChange/{issuer}/{address}/{newNotary}" , produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> notaryChangeFlow(@PathVariable(value = "issuer") String issuer,
+                                                          @PathVariable(value = "address") String address,
+                                                          @PathVariable(value = "newNotary") String notary){
+
+        try {
+            proxy.startTrackedFlowDynamic(SwitchNotaryFlow.class,issuer, address, notary).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
