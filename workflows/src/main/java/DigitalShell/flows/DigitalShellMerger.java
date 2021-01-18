@@ -10,8 +10,8 @@ import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
-import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
-import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
+import net.corda.examples.tokenizedCurrency.contracts.QueryableTokenContract;
+import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 import util.MACRO_TIME_MANG;
@@ -54,7 +54,7 @@ public class DigitalShellMerger {
 
                 AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(totalTokenAvailable, issuer, change, 300);
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = getPartyArrayListHashMap(totalTokenAvailable, issuer, change, 300);
 
                 /*
                 * How to choose Notary here
@@ -67,19 +67,19 @@ public class DigitalShellMerger {
                 TransactionBuilder txBuilder = getTransactionBuilder(map);
 
                 //output
-                DigitalShellTokenState outputState = new DigitalShellTokenState( issuer, getOurIdentity(), totalTokenAvailable.get(), original_address);
+                DigitalShellQueryableState outputState = new DigitalShellQueryableState( issuer, getOurIdentity(), totalTokenAvailable.get(), original_address);
 
-                txBuilder.addOutputState(outputState).addCommand(new TokenContract.Commands.Transfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
+                txBuilder.addOutputState(outputState).addCommand(new QueryableTokenContract.Commands.ShellTransfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
                 signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
                 txBuilder.verify(getServiceHub());
 
                 // Updated Token State to be send to issuer and receiver
-                FlowSession issuerSession = initiateFlow(issuer);
+//                FlowSession issuerSession = initiateFlow(issuer);
 
 
-                subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(issuerSession)));
+                subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
                 time_manager.cut("9");
                 System.out.println(time_manager.result());
                 time_manager.result();
@@ -96,31 +96,31 @@ public class DigitalShellMerger {
 
             /*find all needed State*/
             @NotNull
-            private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap( AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, AtomicInteger change, int pagesize) throws FlowException {
+            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap( AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, AtomicInteger change, int pagesize) throws FlowException {
 
                 int pageSize = pagesize;
                 int pageNumber = 1;
                 long totalStatesAvailable;
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = new HashMap<>();
 
                 LoggerFactory.getLogger(DigitalShellMerger.class).info("SiYuan0");
                 do {
 //                    System.out.println("Querying" + pageNumber);
                     PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
-                    Vault.Page<DigitalShellTokenState> results =
-                            getServiceHub().getVaultService().queryBy(DigitalShellTokenState.class, pageSpec);
+                    Vault.Page<DigitalShellQueryableState> results =
+                            getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, pageSpec);
                     totalStatesAvailable = results.getTotalStatesAvailable();
-                    List<StateAndRef<DigitalShellTokenState>> states = results.getStates();
-                    List<StateAndRef<DigitalShellTokenState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
+                    List<StateAndRef<DigitalShellQueryableState>> states = results.getStates();
+                    List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
                             //Filter according to issuer and address
                             if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(original_address)){
 
                                     if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
-                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+                                        ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
                                         stateAndRefs.add(tokenStateStateAndRef);
                                         map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                                     }else{
-                                        ArrayList<StateAndRef<DigitalShellTokenState>> stateAndRefs = new ArrayList<>();
+                                        ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = new ArrayList<>();
                                         stateAndRefs.add(tokenStateStateAndRef);
                                         map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                                     }
@@ -138,7 +138,7 @@ public class DigitalShellMerger {
             /*put state into transactionbuilder*/
             @NotNull
             @Suspendable
-            private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map) throws FlowException {
+            private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
 
                 //judge num of notary and add inputState
                 Party hotNotary = null;
@@ -148,7 +148,10 @@ public class DigitalShellMerger {
 
                     }
 
-                }else {
+                }else if(map.keySet().size() == 0){
+                    throw new IllegalStateException("You do not have any money");
+                }
+                else {
                     //get the max transaction list
                     int size = -1;
                     for(Party notary: map.keySet()){

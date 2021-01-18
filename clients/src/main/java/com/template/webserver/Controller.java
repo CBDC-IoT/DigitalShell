@@ -80,6 +80,11 @@ public class Controller {
                                                           @PathVariable(value = "address") String address,
                                                           @PathVariable(value = "newNotary") String notary){
 
+        System.out.println(issuer);
+
+        System.out.println(address);
+
+        System.out.println(notary);
         try {
             proxy.startTrackedFlowDynamic(SwitchNotaryFlow.class,issuer, address, notary).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
