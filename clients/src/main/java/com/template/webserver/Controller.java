@@ -1,8 +1,6 @@
 package com.template.webserver;
 
-import DigitalShell.flows.DigitalShellTokenCreateAndIssue;
-import DigitalShell.flows.DigitalShellTokenTransfer;
-import DigitalShell.flows.SwitchNotaryFlow;
+import DigitalShell.flows.*;
 import com.template.webserver.Service.VendingMachineService;
 import net.corda.core.messaging.CordaRPCOps;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +52,31 @@ public class Controller {
         try {
             proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notary).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value =  "/redeemToken" , produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> redeemCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
+                                                          @RequestParam(value = "amount") String amount,
+                                                          @RequestParam(value = "address") String address){
+
+        try {
+            proxy.startTrackedFlowDynamic(DigitalShellTokenRedeem.RedeemDigitalShellTokenFlow.class, issuer, amount , address).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(" Token has been redeemed to "+ address + ".");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value =  "/queryToken" , produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> queryCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
+                                                          @RequestParam(value = "address") String address){
+
+        try {
+            proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class, issuer, address).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(" Token has been redeemed to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

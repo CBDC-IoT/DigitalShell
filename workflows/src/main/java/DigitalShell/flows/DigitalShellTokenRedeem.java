@@ -25,15 +25,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class DigitalShellTokenRedeem {
+
     @InitiatingFlow
     @StartableByRPC
-    private static class RedeemDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {
+    public static class RedeemDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {
         private String issuerString;
         private BigDecimal amount;
         private String original_address;
         // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
-        public RedeemDigitalShellTokenFlow(String issuer, int amount , String address) {
+        public RedeemDigitalShellTokenFlow(String issuer, String amount , String address) {
             this.issuerString = issuer;
             this.amount = new BigDecimal(amount);
           this.original_address = address;

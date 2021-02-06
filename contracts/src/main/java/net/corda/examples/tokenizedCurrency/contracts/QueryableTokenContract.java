@@ -4,6 +4,7 @@ import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.TransactionState;
+import net.corda.core.identity.CordaX500Name;
 import net.corda.core.transactions.LedgerTransaction;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,13 @@ public class QueryableTokenContract implements Contract {
             throw new IllegalArgumentException("Issuer must sign");
 
         if (tokenState.getAddress().equals("")){
+            throw new IllegalArgumentException("Address expected");
+        }
+        CordaX500Name name = tokenState.getIssuer().getName();
+        String organisationName = name.getOrganisation();
+//        System.out.println(name.getOrganisation());
+//        System.out.println(name);
+        if (!organisationName.startsWith("Bank")){
             throw new IllegalArgumentException("Address expected");
         }
     }

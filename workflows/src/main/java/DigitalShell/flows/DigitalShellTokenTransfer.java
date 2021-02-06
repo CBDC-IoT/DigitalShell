@@ -166,34 +166,38 @@ public class DigitalShellTokenTransfer {
                 List<StateAndRef<DigitalShellQueryableState>> states = digitalShellQueryableStatePage.getStates();
                 List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
                     //Filter according to issuer and address
-                    if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer)){
+// !!!!!WARNING!!!!!                   if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer)){
+/*
+*
+To test performance, here I ignore security requirements
+* */
 
-                        if(totalTokenAvailable.get().compareTo(amount)== -1 || totalTokenAvailable.get().compareTo(amount)== 0) {// totalToeknAvailable < Amount
-                            if(map.get(tokenStateStateAndRef.getState().getNotary())!= null) {
-                                ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
-                                stateAndRefs.add(tokenStateStateAndRef);
-                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                            }else{
-                                ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = new ArrayList<>();
-                                stateAndRefs.add(tokenStateStateAndRef);
-                                map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                            }
-                            System.out.println(totalTokenAvailable);
-                            //Calculate total tokens available
-                            totalTokenAvailable.set(totalTokenAvailable.get().add( tokenStateStateAndRef.getState().getData().getAmount()));
+                    if (totalTokenAvailable.get().compareTo(amount) == -1 || totalTokenAvailable.get().compareTo(amount) == 0) {// totalToeknAvailable < Amount
+                        if (map.get(tokenStateStateAndRef.getState().getNotary()) != null) {
+                            ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
+                            stateAndRefs.add(tokenStateStateAndRef);
+                            map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
+                        } else {
+                            ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = new ArrayList<>();
+                            stateAndRefs.add(tokenStateStateAndRef);
+                            map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
                         }
-
-                        // Determine the change needed to be returned
-                        if(change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount)!= -1 ){//>=
-                            change.set(totalTokenAvailable.get().subtract( amount) );
-                            getEnoughMoney.set(true);
-                            System.out.println(change.get().toString());
-                        }
-                        //keep Address to use
-
-                        return true;
+                        System.out.println(totalTokenAvailable);
+                        //Calculate total tokens available
+                        totalTokenAvailable.set(totalTokenAvailable.get().add(tokenStateStateAndRef.getState().getData().getAmount()));
                     }
-                    return false;
+
+                    // Determine the change needed to be returned
+                    if (change.get().equals(new BigDecimal(0)) && totalTokenAvailable.get().compareTo(amount) != -1) {//>=
+                        change.set(totalTokenAvailable.get().subtract(amount));
+                        getEnoughMoney.set(true);
+                        System.out.println(change.get().toString());
+                    }
+                    //keep Address to use
+
+                    return true;
+//                }
+//  WARNING!!!!              return false;
                 }).collect(Collectors.toList());
 
                 if(totalTokenAvailable.get().compareTo(amount)==-1){//<
