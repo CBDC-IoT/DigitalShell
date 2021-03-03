@@ -73,7 +73,7 @@ public class DigitalShellQuery {
             long totalStatesAvailable;
             HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = new HashMap<>();
 
-            LoggerFactory.getLogger(DigitalShellMerger.class).info("SiYuan0");
+            LoggerFactory.getLogger(DigitalShellMerger.class).info("Flag0");
             do {
 //                    System.out.println("Querying" + pageNumber);
                 PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);

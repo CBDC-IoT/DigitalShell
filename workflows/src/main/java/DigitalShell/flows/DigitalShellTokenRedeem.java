@@ -37,7 +37,7 @@ public class DigitalShellTokenRedeem {
         public RedeemDigitalShellTokenFlow(String issuer, String amount , String address) {
             this.issuerString = issuer;
             this.amount = new BigDecimal(amount);
-          this.original_address = address;
+            this.original_address = address;
         }
 
         @Override
@@ -55,7 +55,7 @@ public class DigitalShellTokenRedeem {
 
             AtomicDouble change = new AtomicDouble(0);
 
-            HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(issuer, change, 400);
+            HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = getPartyArrayListHashMap(issuer,original_address, amount, change, 400);
 
             /*
              * How to choose Notary here
@@ -86,7 +86,7 @@ public class DigitalShellTokenRedeem {
 
 
         @NotNull
-        private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap(Party issuer, AtomicDouble change, int pagesize) throws FlowException {
+        private HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> getPartyArrayListHashMap(Party issuer, String original_address, BigDecimal amount, AtomicDouble change, int pagesize) throws FlowException {
             AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<>(new BigDecimal(0));
 
             AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
@@ -96,7 +96,7 @@ public class DigitalShellTokenRedeem {
             long totalStatesAvailable;
             HashMap<Party, ArrayList<StateAndRef<DigitalShellTokenState>>> map = new HashMap<>();
 
-            LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan0");
+            LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("Flag 0");
             do {
 //                    System.out.println("Querying" + pageNumber);
                 PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);

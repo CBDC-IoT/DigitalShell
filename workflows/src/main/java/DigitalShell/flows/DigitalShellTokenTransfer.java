@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
 
 public class DigitalShellTokenTransfer {
+    /*Time manager used for performance test*/
+    static MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
 
         @InitiatingFlow
         @StartableByRPC
@@ -49,7 +51,7 @@ public class DigitalShellTokenTransfer {
             @Override
             @Suspendable
             public String call() throws FlowException {
-                MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
+                /*Time manager used for performance test*/
                 time_manager.start();
 
                 IdentityService identityService = getServiceHub().getIdentityService();
@@ -58,7 +60,7 @@ public class DigitalShellTokenTransfer {
 
                 Party receiver=getParty(identityService, receiverString);
 
-                TransactionBuilder txBuilder = getTransactionBuilder(time_manager, issuer, receiver);
+                TransactionBuilder txBuilder = getTransactionBuilder(issuer, receiver, amount, address, original_address);
 
                 SignedTransaction signedTransaction;
 
@@ -75,7 +77,7 @@ public class DigitalShellTokenTransfer {
                     time_manager.cut("9");
                     System.out.println(time_manager.result());
                     time_manager.result();
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan1");
+                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("Flag1");
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
 
                 }else {
@@ -83,7 +85,7 @@ public class DigitalShellTokenTransfer {
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(receiverSession)));
                     time_manager.cut("9");
                     System.out.println(time_manager.result());
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("SiYuan2");
+                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("Flag2");
                     LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
 
             }
@@ -91,14 +93,14 @@ public class DigitalShellTokenTransfer {
             }
 
             @Suspendable
-            private TransactionBuilder getTransactionBuilder(MACRO_TIME_MANG time_manager, Party issuer, Party receiver) throws FlowException {
+            private TransactionBuilder getTransactionBuilder(Party issuer, Party receiver, BigDecimal amount, String address, String original_address) throws FlowException {
                 AtomicReference<BigDecimal> change = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
                 time_manager.cut("2");
 
                 HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = null;
                 try {
-                    map = getPartyArrayListHashMap(issuer, change);
+                    map = getPartyArrayListHashMap(issuer, change, original_address);
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
                 }
@@ -110,7 +112,7 @@ public class DigitalShellTokenTransfer {
                 time_manager.cut("4");
 
 
-                TransactionBuilder txBuilder = getTransactionBuilder(map);
+                TransactionBuilder txBuilder = mapAnalysisTransactionBuilder(map);
 
                 //output
                 DigitalShellQueryableState outputState = new DigitalShellQueryableState( issuer, receiver, amount, address);
@@ -136,7 +138,7 @@ public class DigitalShellTokenTransfer {
 
             /*find all needed State*/
             @NotNull
-            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change) throws FlowException, NoSuchFieldException {
+            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, String original_address) throws FlowException, NoSuchFieldException {
                 AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
                 AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
@@ -154,7 +156,6 @@ public class DigitalShellTokenTransfer {
                 PageSpecification pageSpec = new PageSpecification(1, 50);
 
                 Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
-
 
                 long totalStatesAvailable1 = digitalShellQueryableStatePage.getTotalStatesAvailable();
 
@@ -210,19 +211,17 @@ To test performance, here I ignore security requirements
             /*put state into transactionbuilder*/
             @NotNull
             @Suspendable
-            private TransactionBuilder getTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
+            private TransactionBuilder mapAnalysisTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
 
 
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
-                LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(String.valueOf(map.size()));
 
                 //judge num of notary and add inputState
                 Party hotNotary = null;
                 if(map.keySet().size() == 1){
                     for(Party notary: map.keySet()){
                         hotNotary = notary;
-
                     }
 
                 }else {

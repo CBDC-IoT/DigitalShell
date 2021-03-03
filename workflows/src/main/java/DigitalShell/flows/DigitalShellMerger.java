@@ -52,7 +52,7 @@ public class DigitalShellMerger {
 
                 AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
-                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = getPartyArrayListHashMap(totalTokenAvailable, issuer, 300);
+                HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = getPartyArrayListHashMap(totalTokenAvailable, issuer, 300, original_address);
 
                 /*
                 * How to choose Notary here
@@ -94,7 +94,7 @@ public class DigitalShellMerger {
 
             /*find all needed State*/
             @NotNull
-            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap( AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, int pagesize) throws FlowException {
+            private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap( AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, int pagesize, String original_address) throws FlowException {
 
                 int pageSize = pagesize;
                 int pageNumber = 1;
