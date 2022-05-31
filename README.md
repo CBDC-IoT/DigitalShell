@@ -42,11 +42,12 @@ We slightly change the database configuration to improve search efficiency for w
 
 ### Figures
 
-![Image](https://raw.githubusercontent.com/CBDC-IoT/DigitalShell/master/docs/images/architecture.png?token=GHSAT0AAAAAABR57FCDJC7K5WD62KOEWBNIYUVQ67A "Image@512x512")
+![Image](./docs/images/architecture.png "Image@512x512")
 
-![Image](https://raw.githubusercontent.com/CBDC-IoT/DigitalShell/master/docs/images/ER.png?token=GHSAT0AAAAAABR57FCCVYLQZ5VMPGMHBWVKYUVQ6JQ "Image@256x256")
+![Image](./docs/images/workflow.png "Image@512x512")
 
-![Image](https://raw.githubusercontent.com/CBDC-IoT/DigitalShell/master/docs/images/workflow.png?token=GHSAT0AAAAAABR57FCDJC7K5WD62KOEWBNIYUVQ67A "Image@512x512")
+![Image](./docs/images/ER.png "Image@256x256")
+
 
 
 ### Extension
