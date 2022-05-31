@@ -41,7 +41,6 @@ We now open query and transfer request APIs for the service provider node.
 We slightly change the database configuration to improve search efficiency for wallets.
 
 ### Figures
+![Image](https://raw.githubusercontent.com/CBDC-IoT/DigitalShell/master/docs/images/architecture.png?token=GHSAT0AAAAAABR57FCDJC7K5WD62KOEWBNIYUVQ67A "Image@512x512"){:width="512px"}
 
-[!image]![Image](https://github.com/CBDC-IoT/DigitalShell/docs/images/architecture.png "Image@512x512"){:width="512px"}
-
-[!image]![Image](https://github.com/CBDC-IoT/DigitalShell/docs/images/ER.png "Image@512x512"){:width="512px"}
+![Image](https://raw.githubusercontent.com/CBDC-IoT/DigitalShell/master/docs/images/ER.png?token=GHSAT0AAAAAABR57FCCVYLQZ5VMPGMHBWVKYUVQ6JQ "Image@512x512"){:width="512px"}
