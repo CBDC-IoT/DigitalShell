@@ -20,10 +20,10 @@ You can run deployNodes in the build.gradle to generate the network and nodes. T
 
 The network consists of four types of nodes: notary, canteen, service provider, bank.
 
-Notary: Institutions or banks which are responsible for transaction validation.
-Bank: Institutions which are responsible for money distribution.
-Service Provider: Bridges between wallets and blockchain network.
-Canteen: Corporations which make business smart contracts or provide payment interface.
+- Notary: Institutions or banks which are responsible for transaction validation.
+- Bank: Institutions which are responsible for money distribution.
+- Service Provider: Bridges between wallets and blockchain network.
+- Canteen: Corporations which make business smart contracts or provide payment interface.
 
 ####  we achieve public access (wallet) to the private network system by address in the token. Wallet: Every person will have one or many wallets containing some tokens.
 Searching Wallet: We modify nodes’ database by creating a foreign key for tokens with address property to make it efficient to search tokens. After that, every transaction consumes nearly constant time and the system could provide as many tokens and wallets as need.
