@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 /**
@@ -32,18 +34,19 @@ public class Controller {
                                               @RequestParam(value = "amount") String amount,
                                               @RequestParam(value = "receiver") String receiver,
                                                         @RequestParam(value = "originalAddress") String originalAddress,
-                                                        @RequestParam(value = "address") String address) {
+                                                        @RequestParam(value = "address") String address,
+                                                        @RequestParam(value = "item") String item) {
 
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,issuer, amount, receiver, originalAddress, address).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(""+ amount + "DigitalShell has been transferred to "+receiver+" with address of " + address +".");
+            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,issuer, amount, receiver, originalAddress, address, item).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(""+ amount + " DigitalShell has been transferred to "+receiver+" from the address of " + address + " for " + item +".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
 
-    @GetMapping(value =  "/createToken" , produces =  TEXT_PLAIN_VALUE )
+    @GetMapping(value =  "/issueToken" , produces =  TEXT_PLAIN_VALUE )
     public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") String amount,
                                                           @RequestParam(value = "receiver") String receiver,
                                                           @RequestParam(value = "address") String address,
@@ -51,7 +54,7 @@ public class Controller {
 
         try {
             proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notary).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
+            return ResponseEntity.status(HttpStatus.OK).body("" + amount + " E-HKD has been issued to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -75,8 +78,8 @@ public class Controller {
                                                           @RequestParam(value = "address") String address){
 
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class, issuer, address).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(" Token has been redeemed to "+ address + ".");
+            BigDecimal balance = proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class, issuer, address).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body("The balance of "+ address + " is " + balance.toString() + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -103,11 +106,6 @@ public class Controller {
                                                           @PathVariable(value = "address") String address,
                                                           @PathVariable(value = "newNotary") String notary){
 
-        System.out.println(issuer);
-
-        System.out.println(address);
-
-        System.out.println(notary);
         try {
             proxy.startTrackedFlowDynamic(SwitchNotaryFlow.class,issuer, address, notary).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
