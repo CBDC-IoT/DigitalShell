@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "DIGITAL_SHELL")
 public class AddressState extends PersistentState implements Serializable {
-    @Column private final Party issuer;
+    @Column(name = "issuer") private final Party issuer;
     @Column private final Party owner;
     @Column private final BigDecimal amount;
     @Column(name = "address") private final String address;
