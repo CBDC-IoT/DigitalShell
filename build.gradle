@@ -13,9 +13,6 @@ buildscript {
         slf4j_version = constants.getProperty("slf4jVersion")
         corda_platform_version = constants.getProperty("platformVersion")
         guava_version = constants.getProperty("guavaVersion")
-        tokens_release_group = 'com.r3.corda.lib.tokens'
-        tokens_release_version = '1.2'
-
         confidential_id_release_group = "com.r3.corda.lib.ci"
         confidential_id_release_version = "1.0"
 
@@ -103,7 +100,7 @@ dependencies {
     // CorDapp dependencies.
     cordapp project(":workflows")
     cordapp project(":contracts")
-    
+
     // For logging
     cordaCompile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
     cordaCompile "org.apache.logging.log4j:log4j-web:${log4j_version}"
@@ -165,15 +162,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
 
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
-    node {
-        name "O=Bank1,L=Guangzhou,C=CN"
-        p2pPort 10007
-        rpcSettings {
-            address("localhost:10008")
-            adminAddress("localhost:10055")
-        }
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-    }
+
     node {
         name "O=Canteen,L=Guangzhou,C=CN"
         p2pPort 10078
@@ -183,22 +172,15 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
-//    node {
-//        name "O=ATM,L=Guangzhou,C=CN"
-//        p2pPort 10019
-//        rpcSettings {
-//            address("localhost:10009")
-//            adminAddress("localhost:10049")
-//        }
-//        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-//    }
+
     node {
-        name "O=CustomerA,L=Guangzhou,C=CN"
+        name "O=ServiceProvider,L=Guangzhou,C=CN"
         p2pPort 10012
         rpcSettings {
             address("localhost:10013")
             adminAddress("localhost:10014")
         }
+        extraConfig = ['h2Settings.address' : 'localhost:10088']
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
 }
@@ -208,8 +190,6 @@ task deployNodesPro(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         projectCordapp {
             deploy = false
         }
-        cordapp("$tokens_release_group:tokens-contracts:$tokens_release_version")
-        cordapp("$tokens_release_group:tokens-workflows:$tokens_release_version")
         cordapp("$confidential_id_release_group:ci-workflows:$confidential_id_release_version")
         cordapp project(':contracts')
         cordapp project(':workflows')
@@ -234,16 +214,6 @@ task deployNodesPro(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
         cordapps = []
     }
-
-//    node {
-//        name "O=ATM,L=Guangzhou,C=CN"
-//        p2pAddress "161.189.113.238:10051"
-//        rpcSettings {
-//            address("localhost:10006")
-//            adminAddress("localhost:10043")
-//        }
-//        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
-//    }
     
     node {
         name "O=Bank,L=Guangzhou,C=CN"
