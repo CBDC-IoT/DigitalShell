@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -50,10 +51,10 @@ public class Controller {
     public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") String amount,
                                                           @RequestParam(value = "receiver") String receiver,
                                                           @RequestParam(value = "address") String address,
-                                                          @RequestParam(value = "notary") int notary){
-
+                                                          @RequestParam(value = "notary") Optional<Integer> notary){
+        Integer notaryInt = notary.orElse(0);
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notary).getReturnValue().get();
+            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notaryInt).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body("" + amount + " E-HKD has been issued to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
