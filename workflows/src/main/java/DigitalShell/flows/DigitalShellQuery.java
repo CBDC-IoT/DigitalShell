@@ -9,19 +9,19 @@ import net.corda.core.flows.StartableByRPC;
 import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.vault.PageSpecification;
-import net.corda.core.transactions.SignedTransaction;
+import net.corda.core.node.services.vault.*;
+import net.corda.examples.tokenizedCurrency.states.AddressState;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
 
 public class DigitalShellQuery {
 
@@ -45,64 +45,58 @@ public class DigitalShellQuery {
 
             Party issuer = getParty(identityService, issuerString);
 
-
-
             AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<>();
-            HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> partyArrayListHashMap = getPartyArrayListHashMap(totalTokenAvailable, issuer, 100);
-
-            Collection<ArrayList<StateAndRef<DigitalShellQueryableState>>> values = partyArrayListHashMap.values();
-
-            BigDecimal totalBalance = new BigDecimal(0);
-            for(ArrayList<StateAndRef<DigitalShellQueryableState>> i: values){
-                for(int k = 0; k < i.size(); k++ ){
-                    totalBalance.add(i.get(k).getState().getData().getAmount());
-                }
+            BigDecimal totalbalance = null;
+            try {
+                totalbalance = getTotalBalance(issuer, address);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
             }
 
-            return totalBalance;
+            return totalbalance;
 
         }
 
 
-        /*find all needed State*/
+
         @NotNull
-        private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(AtomicReference<BigDecimal> totalTokenAvailable, Party issuer, int pagesize) throws FlowException {
+        private BigDecimal getTotalBalance(Party issuer,  String original_address) throws FlowException, NoSuchFieldException {
+            AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
-            int pageSize = pagesize;
-            int pageNumber = 1;
-            long totalStatesAvailable;
-            HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = new HashMap<>();
+            AtomicBoolean getEnoughMoney= new AtomicBoolean(false);
 
-            LoggerFactory.getLogger(DigitalShellMerger.class).info("Flag0");
-            do {
-//                    System.out.println("Querying" + pageNumber);
-                PageSpecification pageSpec = new PageSpecification(pageNumber, pageSize);
-                Vault.Page<DigitalShellQueryableState> results =
-                        getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, pageSpec);
-                totalStatesAvailable = results.getTotalStatesAvailable();
-                List<StateAndRef<DigitalShellQueryableState>> states = results.getStates();
-                List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs = states.stream().filter(tokenStateStateAndRef -> {
-                    //Filter according to issuer and address
-                    if (tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer) && tokenStateStateAndRef.getState().getData().getAddress().equals(address)) {
+            QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED);
 
-                        if (map.get(tokenStateStateAndRef.getState().getNotary()) != null) {
-                            ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
-                            stateAndRefs.add(tokenStateStateAndRef);
-                            map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                        } else {
-                            ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = new ArrayList<>();
-                            stateAndRefs.add(tokenStateStateAndRef);
-                            map.put(tokenStateStateAndRef.getState().getNotary(), stateAndRefs);
-                        }
-                        totalTokenAvailable.set(totalTokenAvailable.get().add(tokenStateStateAndRef.getState().getData().getAmount()));
-                        return true;
-                    }
-                    return false;
-                }).collect(Collectors.toList());
-                pageNumber++;
-            } while ((pageSize * (pageNumber - 1) <= totalStatesAvailable));
+            FieldInfo attributeAddress = getField("address", AddressState.class);
+            FieldInfo attributeIssuer = getField("issuer", AddressState.class);
 
-            return map;
+            CriteriaExpression addressIndex = Builder.equal(attributeAddress, original_address.trim());
+            CriteriaExpression issuerIndex = Builder.equal(attributeIssuer, issuer);
+
+            QueryCriteria customCriteria = new QueryCriteria.VaultCustomQueryCriteria(addressIndex);
+            QueryCriteria customCriteria2 = new QueryCriteria.VaultCustomQueryCriteria(issuerIndex);
+
+            QueryCriteria criteria = generalCriteria.and(customCriteria);
+            QueryCriteria criteria2 = criteria.and(customCriteria2);
+
+            PageSpecification pageSpec = new PageSpecification(1, 50);
+
+            Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria2, pageSpec);
+
+            BigDecimal totalStatesAvailable = BigDecimal.valueOf(digitalShellQueryableStatePage.getTotalStatesAvailable());
+
+
+            List<StateAndRef<DigitalShellQueryableState>> states = digitalShellQueryableStatePage.getStates();
+            List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
+
+                System.out.println(totalTokenAvailable);
+                //Calculate total tokens available
+                totalTokenAvailable.set(totalTokenAvailable.get().add(tokenStateStateAndRef.getState().getData().getAmount()));
+                return true;
+
+            }).collect(Collectors.toList());
+            BigDecimal bigDecimal = totalTokenAvailable.get();
+            return bigDecimal;
         }
 
         /*get party from name*/

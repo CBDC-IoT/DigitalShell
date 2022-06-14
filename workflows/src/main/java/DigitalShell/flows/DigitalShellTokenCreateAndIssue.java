@@ -13,6 +13,7 @@ import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import java.math.BigDecimal;
 
 public class DigitalShellTokenCreateAndIssue {
+
     @InitiatingFlow
     @StartableByRPC
     public static class CreateDigitalShellTokenFlow extends FlowLogic<SignedTransaction> {

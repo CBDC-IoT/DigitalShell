@@ -39,13 +39,15 @@ public class DigitalShellTokenTransfer {
             private final String receiverString;
             private final String address;
             private final String original_address;
+            private final String item;
 
-            public Initiator(String issuer, String amount, String receiver, String originalAddress, String address) {
+            public Initiator(String issuer, String amount, String receiver, String originalAddress, String address, String item) {
                 this.issuerString  = issuer;
                 this.amount = new BigDecimal(amount);
                 this.receiverString = receiver;
                 this.address = address;
                 this.original_address = originalAddress;
+                this.item = item;
             }
 
             @Override
@@ -70,25 +72,15 @@ public class DigitalShellTokenTransfer {
                 // Updated Token State to be send to issuer and receiver
 //                FlowSession issuerSession = initiateFlow(issuer);
                 FlowSession receiverSession = initiateFlow(receiver);
-
-
+                receiverSession.send(item);
                 if(receiver.equals(getOurIdentity())){
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
-                    time_manager.cut("9");
-                    System.out.println(time_manager.result());
-                    time_manager.result();
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("Flag1");
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
-
                 }else {
 //                    FinalityFlow finalityFlow = new FinalityFlow(signedTransaction,ImmutableList.of(issuerSession, receiverSession));
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(receiverSession)));
-                    time_manager.cut("9");
-                    System.out.println(time_manager.result());
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("Flag2");
-                    LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(time_manager.result());
 
             }
+                getServiceHub().getVaultService().addNoteToTransaction(signedTransaction.getId(),item);
                 return "Success";
             }
 
@@ -108,9 +100,6 @@ public class DigitalShellTokenTransfer {
                 /*
                 * How to choose Notary here
                 * */
-
-                time_manager.cut("4");
-
 
                 TransactionBuilder txBuilder = mapAnalysisTransactionBuilder(map);
 
@@ -253,7 +242,6 @@ To test performance, here I ignore security requirements
                 }
                 return txBuilder;
             }
-
         }
 
 
@@ -264,13 +252,20 @@ To test performance, here I ignore security requirements
             private FlowSession otherPartySession;
 
             public Responder(FlowSession otherPartySession) {
+
                 this.otherPartySession = otherPartySession;
             }
 
             @Override
             @Suspendable
             public SignedTransaction call() throws FlowException {
-                return subFlow(new ReceiveFinalityFlow(otherPartySession));
+                String item =  otherPartySession.receive(String.class).unwrap(value -> value);
+
+                SignedTransaction signedTransaction =subFlow(new ReceiveFinalityFlow(otherPartySession));
+
+                getServiceHub().getVaultService().addNoteToTransaction(signedTransaction.getId(),item);
+
+                return signedTransaction;
             }
         }
 
