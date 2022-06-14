@@ -68,7 +68,6 @@ public class DigitalShellTokenTransfer {
 
                 signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
-
                 // Updated Token State to be send to issuer and receiver
 //                FlowSession issuerSession = initiateFlow(issuer);
                 FlowSession receiverSession = initiateFlow(receiver);

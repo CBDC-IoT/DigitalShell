@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class TokenContract implements Contract {
-    public static String ID = "bootcamp.TokenContract";
+    public static String ID = "DigtalShell Contract";
 
     @Override
     public void verify(@NotNull LedgerTransaction tx) throws IllegalArgumentException {
