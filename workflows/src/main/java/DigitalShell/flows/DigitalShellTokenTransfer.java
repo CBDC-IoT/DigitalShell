@@ -75,7 +75,6 @@ public class DigitalShellTokenTransfer {
                 if(receiver.equals(getOurIdentity())){
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
                 }else {
-//                    FinalityFlow finalityFlow = new FinalityFlow(signedTransaction,ImmutableList.of(issuerSession, receiverSession));
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of(receiverSession)));
 
             }
