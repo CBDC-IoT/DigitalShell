@@ -1,7 +1,7 @@
 package com.template.webserver;
 
-import Bean.MyTransaction;
 import DigitalShell.flows.*;
+import com.template.bean.MyTransaction;
 import kotlin.Pair;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateRef;
@@ -9,7 +9,6 @@ import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
-import net.corda.core.messaging.FlowHandle;
 import net.corda.core.messaging.StateMachineTransactionMapping;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
@@ -136,22 +135,28 @@ public class Controller {
                 DigitalShellQueryableState output = (DigitalShellQueryableState) tx.getOutput(0);
                 String payeeNode = Objects.requireNonNull(output.getOwner().nameOrNull()).getOrganisation();
                 String payeeAddress = Objects.requireNonNull(output.getAddress());
-                MyTransaction myTransaction = new MyTransaction(secureHash.toString(),"Issued", getTime(secureHash.toString()), output.getAmount(), payeeNode, payeeAddress,"");
+                MyTransaction myTransaction = new MyTransaction(secureHash.toString(),"Issued", getTime(secureHash.toString()), output.getAmount(), "Bank" , "Bank" ,payeeNode, payeeAddress,"");
                 list.add(myTransaction);
             }
 
             if (equalsMove) {
                 DigitalShellQueryableState output = (DigitalShellQueryableState) tx.getOutput(0);
-//                DigitalShellQueryableState stateRef = (DigitalShellQueryableState) tx.getInputs().get(0);
+
+                /*get input information*/
+                StateRef stateRef = tx.getInputs().get(0);
+                WireTransaction input_tx = proxy.internalFindVerifiedTransaction(stateRef.getTxhash()).getTx();
+                DigitalShellQueryableState output1 = (DigitalShellQueryableState) input_tx.getOutput(stateRef.getIndex());
+                String payerAddress = output1.getAddress();
+                String payerNode = Objects.requireNonNull(output1.getOwner().nameOrNull().getOrganisation());
 
                 MyTransaction myTransaction = null;
                 String payeeNode = Objects.requireNonNull(output.getOwner().nameOrNull()).getOrganisation();
                 String payeeAddress = Objects.requireNonNull(output.getAddress());
                 if(output.getOwner().toString().equals(me.toString())){
-                    myTransaction = new MyTransaction(secureHash.toString(),"Received", getTime(secureHash.toString()), output.getAmount(), payeeNode, payeeAddress, item);
+                    myTransaction = new MyTransaction(secureHash.toString(),"Received", getTime(secureHash.toString()), output.getAmount(), payerNode, payerAddress, payeeNode, payeeAddress, item);
                 }
                 else {
-                    myTransaction = new MyTransaction(secureHash.toString(),"Consumed", getTime(secureHash.toString()), output.getAmount(), payeeNode, payeeAddress, item);
+                    myTransaction = new MyTransaction(secureHash.toString(),"Consumed", getTime(secureHash.toString()), output.getAmount(), payerNode, payerAddress, payeeNode, payeeAddress, item);
                 }
                 list.add(myTransaction);
             }
@@ -204,20 +209,27 @@ public class Controller {
                     String payeeNode = Objects.requireNonNull(output.getOwner().nameOrNull()).getOrganisation();
                     String payeeAddress = Objects.requireNonNull(output.getAddress());
                     System.out.println(payeeAddress);
-                    MyTransaction myTransaction = new MyTransaction(secureHash.toString(), "Issue", getTime(secureHash.toString()), output.getAmount(), payeeNode, payeeAddress, item);
+                    MyTransaction myTransaction = new MyTransaction(secureHash.toString(), "Issue",  getTime(secureHash.toString()), output.getAmount(), "Bank", "Bank", payeeNode, payeeAddress, item);
                     list.add(myTransaction);
                 }
 
                 if (equalsMove) {
-                    ContractState output = tx.getOutput(0);
-                    DigitalShellQueryableState output1 = (DigitalShellQueryableState) output;
+                    DigitalShellQueryableState output = (DigitalShellQueryableState) tx.getOutput(0);;
+
+                    /*get input informaion*/
+                    StateRef stateRef = tx.getInputs().get(0);
+                    WireTransaction input_tx = proxy.internalFindVerifiedTransaction(stateRef.getTxhash()).getTx();
+                    DigitalShellQueryableState output1 = (DigitalShellQueryableState) input_tx.getOutput(stateRef.getIndex());
+                    String payerAddress = output1.getAddress();
+                    String payerNode = Objects.requireNonNull(output1.getOwner().nameOrNull().getOrganisation());
+
                     MyTransaction myTransaction = null;
                     String payeeNode = Objects.requireNonNull(output1.getOwner().nameOrNull()).getOrganisation();
                     String payeeAddress = Objects.requireNonNull(output1.getAddress());
                     if (output1.getOwner().toString().equals(me.toString())) {
-                        myTransaction = new MyTransaction(secureHash.toString(), "Received", getTime(secureHash.toString()), output1.getAmount(), payeeNode,payeeAddress, item);
+                        myTransaction = new MyTransaction(secureHash.toString(),"Received", getTime(secureHash.toString()), output.getAmount(), payerNode, payerAddress, payeeNode, payeeAddress, item);
                     } else {
-                        myTransaction = new MyTransaction(secureHash.toString(), "Consumed", getTime(secureHash.toString()), output1.getAmount(), payeeNode,payeeAddress, item);
+                        myTransaction = new MyTransaction(secureHash.toString(), "Consumed", getTime(secureHash.toString()), output.getAmount(), payerNode, payerAddress, payeeNode, payeeAddress, item);
                     }
                     list.add(myTransaction);
                 }
