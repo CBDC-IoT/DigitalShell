@@ -2,10 +2,13 @@ package com.template.webserver;
 
 import Bean.MyTransaction;
 import DigitalShell.flows.*;
+import kotlin.Pair;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.crypto.SecureHash;
+import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
+import net.corda.core.messaging.FlowHandle;
 import net.corda.core.messaging.StateMachineTransactionMapping;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
@@ -21,6 +24,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -171,7 +175,6 @@ public class Controller {
 
     /*
     * Find new Transactions
-    *
     * */
     @GetMapping(value = "/getTransactionUpdate", produces = APPLICATION_JSON_VALUE)
     private List<MyTransaction> getTransactionUpdate(  @RequestParam(value = "txid") String txid) {
@@ -224,5 +227,36 @@ public class Controller {
         return list;
     }
 
+    /**
+    * This method is only for demo use. The Canteen can get transaction volumes and sales from this API.
+    * We need to implement this API in Canteen end in the future.
+    * */
+    @GetMapping(value = "/getTotalVolumesAndSales", produces = APPLICATION_JSON_VALUE)
+    private Map<String, Double> getTotalVolumesAndSales() {
+        int count=0;
+        double sales=0;
+        List<StateMachineTransactionMapping> stateMachineTransactionMappings = proxy.stateMachineRecordedTransactionMappingSnapshot();
+        for (StateMachineTransactionMapping stateMachineTransactionMapping : stateMachineTransactionMappings) {
+            SecureHash secureHash = stateMachineTransactionMapping.component2();
+            WireTransaction tx = proxy.internalFindVerifiedTransaction(secureHash).getTx();
+            boolean equalsMove = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellTransfer.class);
+            if (equalsMove) {
+                ContractState output = tx.getOutput(0);
+                DigitalShellQueryableState output1 = (DigitalShellQueryableState) output;
+                AbstractParty holder = output1.getOwner();
+                holder.nameOrNull();
+
+                if(holder.nameOrNull().equals(me)){
+                    count++;
+                    sales+= output1.getAmount().doubleValue();
+                }
+            }
+        }
+        Map<String,Double> map = new ConcurrentHashMap<>();
+        map.put("totalSales",sales);
+        map.put("totalVolumes",(double)count);
+        Pair<Integer, Double> pair = new Pair<>(count, sales);
+        return map;
+    }
 
 }
