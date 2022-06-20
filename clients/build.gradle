@@ -22,7 +22,6 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-web:${log4j_version}"
     compile "org.slf4j:jul-to-slf4j:$slf4j_version"
 
-    // Token SDK dependencies.
 }
 
 springBoot {
@@ -39,9 +38,9 @@ task runTemplateClient(type: JavaExec, dependsOn: assemble) {
     args 'localhost:10006', 'user1', 'test'
 }
 
-/* This task will start the springboot server that connects to your node (via RPC connection). All of the http requests
- * are in the Controller file. You can leave the Server.kt and NodeRPCConnection.kt file untouched for your use.
- */
+/**
+ * The following tasks can be used for deploying client servers for each node.
+ * */
 
 //this is ServiceProvider server
 task runCustomerAServer(type: JavaExec, dependsOn: assemble) {

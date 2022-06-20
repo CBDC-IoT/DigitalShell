@@ -4,6 +4,7 @@ import Bean.MyTransaction;
 import DigitalShell.flows.*;
 import kotlin.Pair;
 import net.corda.core.contracts.ContractState;
+import net.corda.core.contracts.StateRef;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.CordaX500Name;
@@ -92,7 +93,7 @@ public class Controller {
                                                           @RequestParam(value = "address") String address){
         try {
             BigDecimal balance = proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class, issuer, address).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body("The balance of "+ address + " is " + balance.toString() + ".");
+            return ResponseEntity.status(HttpStatus.OK).body(balance.toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -141,6 +142,8 @@ public class Controller {
 
             if (equalsMove) {
                 DigitalShellQueryableState output = (DigitalShellQueryableState) tx.getOutput(0);
+//                DigitalShellQueryableState stateRef = (DigitalShellQueryableState) tx.getInputs().get(0);
+
                 MyTransaction myTransaction = null;
                 String payeeNode = Objects.requireNonNull(output.getOwner().nameOrNull()).getOrganisation();
                 String payeeAddress = Objects.requireNonNull(output.getAddress());
