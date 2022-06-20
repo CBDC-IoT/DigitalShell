@@ -43,25 +43,11 @@ task runTemplateClient(type: JavaExec, dependsOn: assemble) {
  * are in the Controller file. You can leave the Server.kt and NodeRPCConnection.kt file untouched for your use.
  */
 
-//this is canteen server
-task runTemplateServer(type: JavaExec, dependsOn: assemble) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.template.webserver.Starter'
-    args '--server.port=10061', '--config.rpc.host=localhost', '--config.rpc.port=10079', '--config.rpc.username=user1', '--config.rpc.password=test'
-}
-
-
-//this is customerA server
+//this is ServiceProvider server
 task runCustomerAServer(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.template.webserver.Starter'
     args '--server.port=10059', '--config.rpc.host=localhost', '--config.rpc.port=10013', '--config.rpc.username=user1', '--config.rpc.password=test'
-}
-//this is customerA server
-task runCustomerBServer(type: JavaExec, dependsOn: assemble) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'com.template.webserver.Starter'
-    args '--server.port=10058', '--config.rpc.host=localhost', '--config.rpc.port=10024', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
 //this is Bank server
@@ -71,12 +57,9 @@ task runBankServer(type: JavaExec, dependsOn: assemble) {
     args '--server.port=10060', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
-
-
 //this is canteen server
-task runLocalBankServer(type: JavaExec, dependsOn: assemble) {
+task runCanteenServer(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.template.webserver.Starter'
-    args '--server.port=10060', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '--server.port=10061', '--config.rpc.host=localhost', '--config.rpc.port=10079', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
-
