@@ -98,14 +98,12 @@ public class DigitalShellTokenTransfer {
                 /*
                 * How to choose Notary here
                 * */
-
                 TransactionBuilder txBuilder = mapAnalysisTransactionBuilder(map);
 
                 //output
                 DigitalShellQueryableState outputState = new DigitalShellQueryableState( issuer, receiver, amount, address);
 
                 txBuilder.addOutputState(outputState).addCommand(new QueryableTokenContract.Commands.ShellTransfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
-
 
                 if(change.get().compareTo(BigDecimal.ZERO) == 1){//>0
                     DigitalShellQueryableState changeState = new DigitalShellQueryableState(issuer, getOurIdentity(), change.get(), original_address);
@@ -120,8 +118,6 @@ public class DigitalShellTokenTransfer {
             private Party getParty(IdentityService identityService, String name) {
                 return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
             }
-
-
 
             /*find all needed State*/
             @NotNull
@@ -199,8 +195,6 @@ To test performance, here I ignore security requirements
             @NotNull
             @Suspendable
             private TransactionBuilder mapAnalysisTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
-
-
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
 
@@ -210,7 +204,6 @@ To test performance, here I ignore security requirements
                     for(Party notary: map.keySet()){
                         hotNotary = notary;
                     }
-
                 }else {
                     //get the max transaction list
                     int size = -1;

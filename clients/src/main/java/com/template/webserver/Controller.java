@@ -80,8 +80,8 @@ public class Controller {
                                                           @RequestParam(value = "address") String address){
 
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenRedeem.RedeemDigitalShellTokenFlow.class, issuer, amount , address).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(" Token has been redeemed to "+ address + ".");
+            proxy.startTrackedFlowDynamic(DigitalShellTokenRedeem.RedeemDigitalShellTokenFlow.class, issuer, amount, address).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(amount + " E-HKD has been redeemed to Bank.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -126,7 +126,7 @@ public class Controller {
 //          CoreTransaction coreTransaction = proxy.internalFindVerifiedTransaction(SecureHash.parse(txid)).getCoreTransaction();
             boolean equalsIssue = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellIssue.class);
             boolean equalsMove = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellTransfer.class);
-            boolean equalsRedeem = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.Redeem.class);
+            boolean equalsRedeem = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellRedeem.class);
 
             Iterable<String> items=proxy.getVaultTransactionNotes(secureHash);
             String item=items.iterator().hasNext()?items.iterator().next():"no item recorded";
@@ -201,7 +201,7 @@ public class Controller {
                 WireTransaction tx = proxy.internalFindVerifiedTransaction(secureHash).getTx();
                 boolean equalsIssue = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellIssue.class);
                 boolean equalsMove = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellTransfer.class);
-                boolean equalsRedeem = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.Redeem.class);
+                boolean equalsRedeem = tx.getCommands().get(0).getValue().getClass().equals(QueryableTokenContract.Commands.ShellRedeem.class);
                 Iterable<String> foods = proxy.getVaultTransactionNotes(secureHash);
                 String item = foods.iterator().hasNext() ? foods.iterator().next() : "no food recorded";
                 if (equalsIssue) {

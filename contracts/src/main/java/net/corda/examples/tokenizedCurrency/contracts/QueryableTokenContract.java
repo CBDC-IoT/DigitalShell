@@ -25,6 +25,8 @@ public class QueryableTokenContract implements Contract {
             verifyIssue(tx);
         else if(tx.getCommand(0).getValue() instanceof Commands.ShellTransfer)
             verifyTransfer(tx);
+        else if(tx.getCommand(0).getValue() instanceof Commands.ShellRedeem)
+            verifyRedeem(tx);
         else
             throw new IllegalArgumentException("Unsupported Command");
 
@@ -95,9 +97,19 @@ public class QueryableTokenContract implements Contract {
             throw new IllegalArgumentException("Owner must Sign");
     }
 
+    private void verifyRedeem(LedgerTransaction tx){
+        // Inputs must be greater than zero
+        if(tx.getInputs().size() < 1)
+            throw new IllegalArgumentException("More than 0 inputs expected");
+
+        // Owner must sign
+        if(!(tx.getCommand(0).getSigners().contains(((DigitalShellQueryableState)tx.getInput(0)).getOwner().getOwningKey())))
+            throw new IllegalArgumentException("Owner must Sign");
+    }
+
     public interface Commands extends CommandData {
         class ShellIssue implements Commands { }
         class ShellTransfer implements Commands { }
-        class Redeem implements Commands { }
+        class ShellRedeem implements Commands { }
     }
 }
