@@ -210,8 +210,6 @@ public class DigitalShellTokenRedeem {
         }
     }
 
-
-
     @InitiatedBy(RedeemDigitalShellTokenFlow.class)
     public static class Responder extends FlowLogic<SignedTransaction>{
 
