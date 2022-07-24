@@ -1,4 +1,4 @@
-rootProject.name = 'DIgitalShellTest'
+rootProject.name = 'DigitalShellTest'
 
 include 'workflows'
 include 'contracts'

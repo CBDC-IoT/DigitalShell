@@ -98,13 +98,13 @@ public class Controller {
         }
     }
 
-    @GetMapping(value =  "/notaryChange/{issuer}/{address}/{newNotary}" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> notaryChangeFlow(@PathVariable(value = "issuer") String issuer,
-                                                          @PathVariable(value = "address") String address,
-                                                          @PathVariable(value = "newNotary") String notary){
-
+    @GetMapping(value =  "/notaryChange" , produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> notaryChangeFlow(@RequestParam(value = "issuer") String issuer,
+                                                   @RequestParam(value = "address") String address,
+                                                   @RequestParam(value = "notary") Optional<Integer> notary){
+        Integer notaryInt = notary.orElse(0);
         try {
-            proxy.startTrackedFlowDynamic(SwitchNotaryFlow.class,issuer, address, notary).getReturnValue().get();
+            proxy.startTrackedFlowDynamic(SwitchNotaryFlow.class, issuer, address, notaryInt).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(" Token has been issued to "+ address + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
