@@ -29,11 +29,11 @@ public class DigitalShellMerger {
         @InitiatingFlow
         @StartableByRPC
         public static class MergeDigitalShellFlow extends FlowLogic<String> {
-            private final String partyString;
+            private final Party issuer;
             private final String original_address;
 
-            public MergeDigitalShellFlow(String party, String originalAddress) {
-                this.partyString  = party;
+            public MergeDigitalShellFlow(Party issuer, String originalAddress) {
+                this.issuer  = issuer;
                 this.original_address = originalAddress;
             }
 
@@ -45,8 +45,6 @@ public class DigitalShellMerger {
                 time_manager.start();
 
                 IdentityService identityService = getServiceHub().getIdentityService();
-
-                Party issuer = getParty(identityService, partyString);
 
                 time_manager.cut("2");
 
@@ -65,7 +63,7 @@ public class DigitalShellMerger {
                 TransactionBuilder txBuilder = getTransactionBuilder(map);
 
                 //output
-                DigitalShellQueryableState outputState = new DigitalShellQueryableState( issuer, getOurIdentity(), totalTokenAvailable.get(), original_address);
+                DigitalShellQueryableState outputState = new DigitalShellQueryableState(issuer, getOurIdentity(), totalTokenAvailable.get(), original_address);
 
                 txBuilder.addOutputState(outputState).addCommand(new QueryableTokenContract.Commands.ShellTransfer(), ImmutableList.of(getOurIdentity().getOwningKey()));
 
@@ -75,7 +73,6 @@ public class DigitalShellMerger {
 
                 // Updated Token State to be send to issuer and receiver
 //                FlowSession issuerSession = initiateFlow(issuer);
-
 
                 subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
                 time_manager.cut("9");
@@ -89,7 +86,7 @@ public class DigitalShellMerger {
 
             /*get party from name*/
             private Party getParty(IdentityService identityService, String name) {
-                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ partyString+"party not found"));
+                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException("" + name +"party not found"));
             }
 
             /*find all needed State*/
@@ -143,7 +140,6 @@ public class DigitalShellMerger {
                 if(map.keySet().size() == 1){
                     for(Party notary: map.keySet()){
                         hotNotary = notary;
-
                     }
 
                 }else if(map.keySet().size() == 0){
@@ -160,6 +156,8 @@ public class DigitalShellMerger {
                         }
                     }
                 }
+
+                hotNotary =getServiceHub().getNetworkMapCache().getNotaryIdentities().get(1);
                 TransactionBuilder txBuilder = new TransactionBuilder(hotNotary);
 
                 //notary change
@@ -177,10 +175,7 @@ public class DigitalShellMerger {
                 }
                 return txBuilder;
             }
-
         }
-
-
 
         @InitiatedBy(MergeDigitalShellFlow.class)
         public static class Responder extends FlowLogic<SignedTransaction>{

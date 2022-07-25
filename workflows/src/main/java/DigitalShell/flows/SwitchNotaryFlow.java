@@ -1,6 +1,7 @@
 package DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
@@ -18,12 +19,12 @@ import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
 public class SwitchNotaryFlow extends FlowLogic<String> {
     private String issuerString;
     private String address;
-    private String newNotaryString;
+    private int notaryInt;
 
-    public SwitchNotaryFlow(String issuer, String address, String newNotary) {
-        this.issuerString = issuer;
+    public SwitchNotaryFlow(String issuerString, String address, int notaryInt) {
+        this.issuerString = issuerString;
         this.address = address;
-        this.newNotaryString = newNotary;
+        this.notaryInt = notaryInt;
     }
 
     private final ProgressTracker.Step QUERYING_VAULT = new ProgressTracker.Step("Fetching StateStateAndRef from node's vault.");
@@ -50,10 +51,14 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
         progressTracker.setCurrentStep(QUERYING_VAULT);
         progressTracker.setCurrentStep(INITITATING_TRANSACTION);
         IdentityService identityService = getServiceHub().getIdentityService();
-        Party newNotary=identityService.partiesFromName(newNotaryString,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+newNotaryString+"party not found"));
+        Party newNotary=getServiceHub().getNetworkMapCache().getNotaryIdentities().get(notaryInt);
+        Party issuer = getParty(identityService, issuerString);
 
-
-        subFlow(new DigitalShellMerger.MergeDigitalShellFlow(issuerString, address));
+/** Since we need to find a token for notary change, we better firstly merge all tokens together
+ * and change the token to one notary.
+ * But for experiment use, we only change one token to one notary.
+ **/
+//        subFlow(new DigitalShellMerger.MergeDigitalShellFlow(issuer, address));
 
         QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED);
 
@@ -75,11 +80,18 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
         Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
 
         StateAndRef<DigitalShellQueryableState> digitalShellQueryableStateStateAndRef = digitalShellQueryableStatePage.getStates().get(0);
+        Party notary = digitalShellQueryableStateStateAndRef.getState().getNotary();
+        if (notary == newNotary){
+            subFlow(new NotaryChangeFlow<DigitalShellQueryableState>(digitalShellQueryableStateStateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
+        }
+        //for experiments
 
-        subFlow(new NotaryChangeFlow<DigitalShellQueryableState>(digitalShellQueryableStateStateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
-
+        subFlow(new DigitalShellTokenTransfer.Initiator(issuerString, "1", "Bank", address, address, "Coffee"));
         return "Notary Switched Successfully";
     }
 
-
+    /*get party from name*/
+    private Party getParty(IdentityService identityService, String name) {
+        return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(name + " party not found"));
+    }
 }
