@@ -85,6 +85,7 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
             subFlow(new NotaryChangeFlow<DigitalShellQueryableState>(digitalShellQueryableStateStateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
         }
         //for experiments
+
         subFlow(new DigitalShellTokenTransfer.Initiator(issuerString, "1", "Bank", address, address, "Coffee"));
         return "Notary Switched Successfully";
     }
