@@ -9,6 +9,8 @@ sourceSets {
 }
 
 dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
+
     // Corda dependencies.
     compile "$corda_release_group:corda-rpc:$corda_release_version"
 
@@ -21,7 +23,9 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
     compile "org.apache.logging.log4j:log4j-web:${log4j_version}"
     compile "org.slf4j:jul-to-slf4j:$slf4j_version"
-
+    // https://projectlombok.org
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
 }
 
 springBoot {
@@ -42,12 +46,20 @@ task runTemplateClient(type: JavaExec, dependsOn: assemble) {
  * The following tasks can be used for deploying client servers for each node.
  * */
 
-//this is ServiceProvider server
-task runServiceProviderServer(type: JavaExec, dependsOn: assemble) {
+//this is ServiceProvider2 server
+task runServiceProvider2Server(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.template.webserver.Starter'
-    args '--server.port=10059', '--config.rpc.host=localhost', '--config.rpc.port=10013', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '--server.port=10059', '--config.rpc.host=localhost', '--config.rpc.port=10113', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
+
+//this is ServiceProvider server
+task runServiceProvider3Server(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.template.webserver.Starter'
+    args '--server.port=10058', '--config.rpc.host=localhost', '--config.rpc.port=10013', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+
 
 //this is Bank server
 task runBankServer(type: JavaExec, dependsOn: assemble) {

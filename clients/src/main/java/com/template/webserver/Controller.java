@@ -1,7 +1,7 @@
 package com.template.webserver;
 
 import DigitalShell.flows.*;
-import com.template.bean.MyTransaction;
+import com.template.bean.*;
 import kotlin.Pair;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateRef;
@@ -44,54 +44,45 @@ public class Controller {
         this.me = proxy.nodeInfo().getLegalIdentities().get(0).getName();
     }
 
-    @GetMapping(value =  "/moveToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                              @RequestParam(value = "amount") String amount,
-                                              @RequestParam(value = "receiver") String receiver,
-                                                        @RequestParam(value = "originalAddress") String originalAddress,
-                                                        @RequestParam(value = "address") String address,
-                                                        @RequestParam(value = "item") Optional<String> itemString) {
-        String item = itemString.orElse("Transfer");
+    @PostMapping(value =  "/moveToken" , consumes = APPLICATION_JSON_VALUE, produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestBody movedToken movedToken) {
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,issuer, amount, receiver, originalAddress, address, item).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(""+ amount + " DigitalShell has been transferred to "+receiver+" from the address of " + address + " for " + item +".");
+            proxy.startTrackedFlowDynamic(DigitalShellTokenTransfer.Initiator.class,movedToken.getIssuer(), movedToken.getAmount(), movedToken.getReceiver(),
+                    movedToken.getOriginalAddress(), movedToken.getAddress(), movedToken.getItemString()).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(""+ movedToken.getAmount() + " DigitalShell has been transferred to "+movedToken.getReceiver() +" from the address of " +
+                    movedToken.getAddress() + " for " + movedToken.getItemString() +".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping(value =  "/issueToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") String amount,
-                                                          @RequestParam(value = "receiver") String receiver,
-                                                          @RequestParam(value = "address") String address,
-                                                          @RequestParam(value = "notary") Optional<Integer> notary){
-        Integer notaryInt = notary.orElse(0);
+    @PostMapping(value="/issueToken", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> createCurrencyTokenFlow(@RequestBody IssuedToken issuedToken){
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,amount, receiver, address, notaryInt).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body("" + amount + " E-HKD has been issued to "+ address + ".");
+            proxy.startTrackedFlowDynamic(DigitalShellTokenCreateAndIssue.CreateDigitalShellTokenFlow.class,issuedToken.getAmount(), issuedToken.getReceiver(), issuedToken.getAddress(), issuedToken.getNotary()).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body("" + issuedToken.getAmount() + " E-HKD has been issued to "+ issuedToken.getAddress() + ".");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping(value =  "/redeemToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> redeemCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                                          @RequestParam(value = "amount") String amount,
-                                                          @RequestParam(value = "address") String address){
+    @PostMapping(value =  "/redeemToken" , consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> redeemCurrencyTokenFlow(@RequestBody redeemedToken redeemedToken){
 
         try {
-            proxy.startTrackedFlowDynamic(DigitalShellTokenRedeem.RedeemDigitalShellTokenFlow.class, issuer, amount, address).getReturnValue().get();
-            return ResponseEntity.status(HttpStatus.OK).body(amount + " E-HKD has been redeemed to Bank.");
+            proxy.startTrackedFlowDynamic(DigitalShellTokenRedeem.RedeemDigitalShellTokenFlow.class,
+                    redeemedToken.getIssuer(), redeemedToken.getAmount(), redeemedToken.getAddress()).getReturnValue().get();
+            return ResponseEntity.status(HttpStatus.OK).body(redeemedToken.getAmount() + " E-HKD has been redeemed to Bank.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping(value =  "/queryToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> queryCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                                          @RequestParam(value = "address") String address){
+    @PostMapping(value =  "/queryToken" , consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> queryCurrencyTokenFlow(@RequestBody queriedToken queriedToken){
         try {
-            BigDecimal balance = proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class, issuer, address).getReturnValue().get();
+            BigDecimal balance = proxy.startTrackedFlowDynamic(DigitalShellQuery.DigitalShellQueryFlow.class,
+                    queriedToken.getIssuer(), queriedToken.getAddress()).getReturnValue().get();
             return ResponseEntity.status(HttpStatus.OK).body(balance.toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
