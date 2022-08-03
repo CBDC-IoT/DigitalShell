@@ -41,12 +41,12 @@ public class DigitalShellMerger {
             @Suspendable
             public String call() throws FlowException {
 
-                MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
-                time_manager.start();
+//                MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
+//                time_manager.start();
 
                 IdentityService identityService = getServiceHub().getIdentityService();
 
-                time_manager.cut("2");
+//                time_manager.cut("2");
 
                 AtomicReference<BigDecimal> totalTokenAvailable = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
@@ -56,7 +56,7 @@ public class DigitalShellMerger {
                 * How to choose Notary here
                 * */
 
-                time_manager.cut("4");
+//                time_manager.cut("4");
 
                 SignedTransaction signedTransaction = null;
 
@@ -75,18 +75,11 @@ public class DigitalShellMerger {
 //                FlowSession issuerSession = initiateFlow(issuer);
 
                 subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
-                time_manager.cut("9");
-                System.out.println(time_manager.result());
-                time_manager.result();
-                LoggerFactory.getLogger(DigitalShellMerger.class).info("SiYuan1");
-                LoggerFactory.getLogger(DigitalShellMerger.class).info(time_manager.result());
+//                time_manager.cut("9");
+//                time_manager.result();
+//                LoggerFactory.getLogger(DigitalShellMerger.class).info(time_manager.result());
 
                 return "Success";
-            }
-
-            /*get party from name*/
-            private Party getParty(IdentityService identityService, String name) {
-                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException("" + name +"party not found"));
             }
 
             /*find all needed State*/

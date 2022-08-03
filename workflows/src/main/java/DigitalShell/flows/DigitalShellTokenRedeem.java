@@ -2,7 +2,6 @@ package DigitalShell.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.AtomicDouble;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
@@ -12,12 +11,9 @@ import net.corda.core.node.services.vault.*;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
 import net.corda.examples.tokenizedCurrency.contracts.QueryableTokenContract;
-import net.corda.examples.tokenizedCurrency.contracts.TokenContract;
 import net.corda.examples.tokenizedCurrency.states.AddressState;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
-import net.corda.examples.tokenizedCurrency.states.DigitalShellTokenState;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
+import static util.IdentityManager.getParty;
 
 public class DigitalShellTokenRedeem {
 
@@ -37,7 +34,6 @@ public class DigitalShellTokenRedeem {
         private String issuerString;
         private BigDecimal amount;
         private String original_address;
-        // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
         public RedeemDigitalShellTokenFlow(String issuer, String amount , String address) {
             this.issuerString = issuer;
@@ -48,13 +44,11 @@ public class DigitalShellTokenRedeem {
         @Override
         @Suspendable
         public String call() throws FlowException {
-            /*Time manager used for performance test*/
-            System.out.println("Redeem - Start");
             IdentityService identityService = getServiceHub().getIdentityService();
 
             Party issuer = getParty(identityService, issuerString);
 
-            Party receiver=getParty(identityService, "Bank");
+            Party receiver = getParty(identityService, "Bank");
 
             TransactionBuilder txBuilder = getTransactionBuilder(issuer, receiver, amount, "Bank", original_address);
 
@@ -62,8 +56,6 @@ public class DigitalShellTokenRedeem {
 
             signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
-            // Updated Token State to be send to issuer and receiver
-//                FlowSession issuerSession = initiateFlow(issuer);
             FlowSession receiverSession = initiateFlow(receiver);
             if(receiver.equals(getOurIdentity())){
                 subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
@@ -104,11 +96,6 @@ public class DigitalShellTokenRedeem {
             return txBuilder;
         }
 
-        /*get party from name*/
-        private Party getParty(IdentityService identityService, String name) {
-            return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
-        }
-
         /*find all needed State*/
         @NotNull
         private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, String original_address) throws FlowException, NoSuchFieldException {
@@ -129,8 +116,6 @@ public class DigitalShellTokenRedeem {
             PageSpecification pageSpec = new PageSpecification(1, 50);
 
             Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
-
-            System.out.println("Redeem - E-HKD search");
 
             HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = new HashMap<>();
 
@@ -173,14 +158,13 @@ public class DigitalShellTokenRedeem {
         @Suspendable
         private TransactionBuilder mapAnalysisTransactionBuilder(HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map) throws FlowException {
 
-            //judge num of notary and add inputState
             Party hotNotary = null;
             if(map.keySet().size() == 1){
                 for(Party notary: map.keySet()){
                     hotNotary = notary;
                 }
             }else {
-                //get the max transaction list
+
                 int size = -1;
                 for(Party notary: map.keySet()){
                     int sizeTemp = map.get(notary).size();

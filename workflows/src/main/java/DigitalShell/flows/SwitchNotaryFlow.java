@@ -11,8 +11,10 @@ import net.corda.core.node.services.vault.*;
 import net.corda.core.utilities.ProgressTracker;
 import net.corda.examples.tokenizedCurrency.states.AddressState;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
+import util.IdentityManager;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
+import static util.IdentityManager.getParty;
 
 @InitiatingFlow
 @StartableByRPC
@@ -54,8 +56,8 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
         Party newNotary=getServiceHub().getNetworkMapCache().getNotaryIdentities().get(notaryInt);
         Party issuer = getParty(identityService, issuerString);
 
-/** Since we need to find a token for notary change, we better firstly merge all tokens together
- * and change the token to one notary.
+/** Since we need to find a token for notary change, we better firstly merge all tokens
+ * together into one token that belongs to  one notary.
  * But for experiment use, we only change one token to one notary.
  **/
 //        subFlow(new DigitalShellMerger.MergeDigitalShellFlow(issuer, address));
@@ -84,14 +86,12 @@ public class SwitchNotaryFlow extends FlowLogic<String> {
         if (notary == newNotary){
             subFlow(new NotaryChangeFlow<DigitalShellQueryableState>(digitalShellQueryableStateStateAndRef, newNotary, AbstractStateReplacementFlow.Instigator.Companion.tracker()));
         }
-        //for experiments
 
-        subFlow(new DigitalShellTokenTransfer.Initiator(issuerString, "1", "Bank", address, address, "Coffee"));
+        //for experiments
+//        subFlow(new DigitalShellTokenTransfer.Initiator(issuerString, "1", "Bank", address, address, "Coffee"));
         return "Notary Switched Successfully";
     }
 
     /*get party from name*/
-    private Party getParty(IdentityService identityService, String name) {
-        return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(name + " party not found"));
-    }
+
 }

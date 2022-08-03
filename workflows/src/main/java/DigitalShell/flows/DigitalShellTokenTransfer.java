@@ -10,11 +10,13 @@ import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.*;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
+import net.corda.core.utilities.ProgressTracker;
 import net.corda.examples.tokenizedCurrency.contracts.QueryableTokenContract;
 import net.corda.examples.tokenizedCurrency.states.AddressState;
 import net.corda.examples.tokenizedCurrency.states.DigitalShellQueryableState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
+import util.IdentityManager;
 import util.MACRO_TIME_MANG;
 
 import java.math.BigDecimal;
@@ -26,10 +28,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
+import static util.IdentityManager.getParty;
 
 public class DigitalShellTokenTransfer {
     /*Time manager used for performance test*/
-    static MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
+//    static MACRO_TIME_MANG time_manager = new MACRO_TIME_MANG();
 
         @InitiatingFlow
         @StartableByRPC
@@ -50,17 +53,32 @@ public class DigitalShellTokenTransfer {
                 this.item = item;
             }
 
+
+            private final ProgressTracker.Step QUERYING_VAULT = new ProgressTracker.Step("Fetching StateStateAndRef from node's vault.");
+            private final ProgressTracker.Step INITITATING_TRANSACTION = new ProgressTracker.Step("Initiating Transfer Transaction"){
+                @Override
+                public ProgressTracker childProgressTracker() {
+                    return AbstractStateReplacementFlow.Instigator.Companion.tracker();
+                }
+            };
+
+            private final ProgressTracker progressTracker = new ProgressTracker(
+                    QUERYING_VAULT,
+                    INITITATING_TRANSACTION
+            );
+
+
             @Override
             @Suspendable
             public String call() throws FlowException {
                 /*Time manager used for performance test*/
-                time_manager.start();
+//                time_manager.start();
 
                 IdentityService identityService = getServiceHub().getIdentityService();
 
                 Party issuer = getParty(identityService, issuerString);
 
-                Party receiver=getParty(identityService, receiverString);
+                Party receiver = getParty(identityService, receiverString);
 
                 TransactionBuilder txBuilder = getTransactionBuilder(issuer, receiver, amount, address, original_address);
 
@@ -68,10 +86,16 @@ public class DigitalShellTokenTransfer {
 
                 signedTransaction = getServiceHub().signInitialTransaction(txBuilder);
 
-                // Updated Token State to be send to issuer and receiver
-//                FlowSession issuerSession = initiateFlow(issuer);
+                /* Updated Token State to be sent to issuer and receiver
+                 judge whether we need to involve issuer in the flow */
+
+                // FlowSession issuerSession = initiateFlow(issuer);
+
                 FlowSession receiverSession = initiateFlow(receiver);
                 receiverSession.send(item);
+
+                progressTracker.setCurrentStep(INITITATING_TRANSACTION);
+
                 if(receiver.equals(getOurIdentity())){
                     subFlow(new FinalityFlow(signedTransaction, ImmutableList.of()));
                 }else {
@@ -86,7 +110,7 @@ public class DigitalShellTokenTransfer {
             private TransactionBuilder getTransactionBuilder(Party issuer, Party receiver, BigDecimal amount, String address, String original_address) throws FlowException {
                 AtomicReference<BigDecimal> change = new AtomicReference<BigDecimal>(new BigDecimal(0));
 
-                time_manager.cut("2");
+//                time_manager.cut("2");
 
                 HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> map = null;
                 try {
@@ -114,11 +138,6 @@ public class DigitalShellTokenTransfer {
                 return txBuilder;
             }
 
-            /*get party from name*/
-            private Party getParty(IdentityService identityService, String name) {
-                return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString+"party not found"));
-            }
-
             /*find all needed State*/
             @NotNull
             private HashMap<Party, ArrayList<StateAndRef<DigitalShellQueryableState>>> getPartyArrayListHashMap(Party issuer, AtomicReference<BigDecimal> change, String original_address) throws FlowException, NoSuchFieldException {
@@ -136,6 +155,8 @@ public class DigitalShellTokenTransfer {
 
                 QueryCriteria criteria = generalCriteria.and(customCriteria);
 
+                progressTracker.setCurrentStep(QUERYING_VAULT);
+
                 PageSpecification pageSpec = new PageSpecification(1, 50);
 
                 Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria, pageSpec);
@@ -149,13 +170,8 @@ public class DigitalShellTokenTransfer {
 
                 List<StateAndRef<DigitalShellQueryableState>> states = digitalShellQueryableStatePage.getStates();
                 List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
-                    //Filter according to issuer and address
-// !!!!!WARNING!!!!!                   if(tokenStateStateAndRef.getState().getData().getIssuer().equals(issuer)){
-/*
-*
-To test performance, here I ignore security requirements
-* */
 
+                    // Potentially we need more checks for tokens.
                     if (totalTokenAvailable.get().compareTo(amount) == -1 || totalTokenAvailable.get().compareTo(amount) == 0) {// totalToeknAvailable < Amount
                         if (map.get(tokenStateStateAndRef.getState().getNotary()) != null) {
                             ArrayList<StateAndRef<DigitalShellQueryableState>> stateAndRefs = map.get(tokenStateStateAndRef.getState().getNotary());
@@ -177,11 +193,8 @@ To test performance, here I ignore security requirements
                         getEnoughMoney.set(true);
                         System.out.println(change.get().toString());
                     }
-                    //keep Address to use
 
                     return true;
-//                }
-//  WARNING!!!!              return false;
                 }).collect(Collectors.toList());
 
                 if(totalTokenAvailable.get().compareTo(amount)==-1){//<
@@ -198,14 +211,14 @@ To test performance, here I ignore security requirements
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info("map");
                 LoggerFactory.getLogger(DigitalShellTokenTransfer.class).info(map.toString());
 
-                //judge num of notary and add inputState
+                //Get the number of notary and add inputState
                 Party hotNotary = null;
                 if(map.keySet().size() == 1){
                     for(Party notary: map.keySet()){
                         hotNotary = notary;
                     }
                 }else {
-                    //get the max transaction list
+                    //get the notary that manages the maximum tokens
                     int size = -1;
                     for(Party notary: map.keySet()){
                         int sizeTemp = map.get(notary).size();
