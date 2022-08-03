@@ -43,27 +43,17 @@ flow start DigitalShellTokenTransfer issuer: Bank, amount: 10, receiver: Canteen
 ```
 #### Web APIs:
 ```
-@GetMapping(value =  "/moveToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                              @RequestParam(value = "amount") String amount,
-                                              @RequestParam(value = "receiver") String receiver,
-                                                        @RequestParam(value = "originalAddress") String originalAddress,
-                                                        @RequestParam(value = "address") String address)
-                                                        
-@GetMapping(value =  "/issueToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> createCurrencyTokenFlow(@RequestParam(value = "amount") String amount,
-                                                          @RequestParam(value = "receiver") String receiver,
-                                                          @RequestParam(value = "address") String address,
-                                                          @RequestParam(value = "notary") int notary)
-                                                          
-@GetMapping(value =  "/redeemToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> redeemCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                                          @RequestParam(value = "amount") String amount,
-                                                          @RequestParam(value = "address") String address)
+@PostMapping(value =  "/moveToken" , consumes = APPLICATION_JSON_VALUE, produces =  TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> MoveCurrencyTokenFlow(@RequestBody movedToken movedToken)
 
-@GetMapping(value =  "/queryToken" , produces =  TEXT_PLAIN_VALUE )
-    public ResponseEntity<String> queryCurrencyTokenFlow(@RequestParam(value = "issuer") String issuer,
-                                                          @RequestParam(value = "address") String address)
+@PostMapping(value="/issueToken", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> createCurrencyTokenFlow(@RequestBody IssuedToken issuedToken)
+
+@PostMapping(value =  "/redeemToken" , consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE )
+    public ResponseEntity<String> redeemCurrencyTokenFlow(@RequestBody redeemedToken redeemedToken)
+
+@PostMapping(value =  "/queryToken" , consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> queryCurrencyTokenFlow(@RequestBody queriedToken queriedToken)
 ```
 
 #### You can also run client service which will connect to the corda nodes and provide open APIs.
