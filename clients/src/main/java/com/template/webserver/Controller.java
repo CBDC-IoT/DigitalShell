@@ -102,7 +102,6 @@ public class Controller {
         }
     }
 
-
     /*
     * Get Transaction History for front-end presentation
     * */
@@ -165,7 +164,7 @@ public class Controller {
                 Instant recordedTime = state.getRecordedTime();
 
                 DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
-                String time2=DATE_TIME_FORMATTER.format(recordedTime);
+                String time2 = DATE_TIME_FORMATTER.format(recordedTime);
                 return time2;
             }
         }

@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
+import static util.IdentityManager.getParty;
 
 public class DigitalShellQuery {
 
@@ -31,7 +32,6 @@ public class DigitalShellQuery {
     public static class DigitalShellQueryFlow extends FlowLogic<BigDecimal> {
         private String issuerString;
         private String address;
-        // amount property of a Currency can change hence we are considering Currency as a evolvable asset
 
         public DigitalShellQueryFlow(String issuer, String address) {
             this.issuerString = issuer;
@@ -52,12 +52,8 @@ public class DigitalShellQuery {
             } catch (NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
-
             return totalbalance;
-
         }
-
-
 
         @NotNull
         private BigDecimal getTotalBalance(Party issuer,  String original_address) throws FlowException, NoSuchFieldException {
@@ -83,9 +79,6 @@ public class DigitalShellQuery {
 
             Vault.Page<DigitalShellQueryableState> digitalShellQueryableStatePage = getServiceHub().getVaultService().queryBy(DigitalShellQueryableState.class, criteria2, pageSpec);
 
-            BigDecimal totalStatesAvailable = BigDecimal.valueOf(digitalShellQueryableStatePage.getTotalStatesAvailable());
-
-
             List<StateAndRef<DigitalShellQueryableState>> states = digitalShellQueryableStatePage.getStates();
             List<StateAndRef<DigitalShellQueryableState>> tokenStateAndRefs =  states.stream().filter(tokenStateStateAndRef -> {
 
@@ -97,11 +90,6 @@ public class DigitalShellQuery {
             }).collect(Collectors.toList());
             BigDecimal bigDecimal = totalTokenAvailable.get();
             return bigDecimal;
-        }
-
-        /*get party from name*/
-        private Party getParty(IdentityService identityService, String name) {
-            return identityService.partiesFromName(name,false).stream().findAny().orElseThrow(()-> new IllegalArgumentException(""+ issuerString +"party not found"));
         }
     }
 }
